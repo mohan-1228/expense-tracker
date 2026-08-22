@@ -1,8 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
+const authRoutes = require('./src/routes/authRoutes');
+
+
 
 const app = express();
+app.use(express.json());
+
+app.use('/auth',authRoutes);
+
 const port = process.env.PORT || 5001;
 
 // Database connection pool
