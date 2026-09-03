@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const pool = require('../config/db');
+const jwt = require('jsonwebtoken');
 
 const signup = async (req, res) => {
     const { email, password, name } = req.body;
@@ -34,4 +35,36 @@ const signup = async (req, res) => {
 
 };
 
-module.exports = {signup};
+const login = async (req, res) => {
+    const { email, password } = req.body;
+
+    if(!email || !password){
+        return res.status(400).json({error: "Email and password are required"});
+    }
+
+    try{
+        const userResult = await pool.query('SELECT id, email, password_hash FROM users WHERE email = $1', [email]);
+
+        if(userResult.rows.length === 0){
+            return res.status(401).json({error: "Invalid email or password"});
+        }
+
+        const user = userResult.rows[0];
+
+        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+        if(!isPasswordValid){
+            return res.status(401).json({error: "Invalid email or password"});
+        }
+
+        const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1h'});
+
+        res.status(200).json({message: "Login successful", token, user: {id: user.id, email: user.email}});
+
+    }catch (err){
+        console.error(err);
+        res.status(500).json({error: "Something went wrong during login"});
+    }
+};
+
+module.exports = {signup, login};
