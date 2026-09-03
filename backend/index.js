@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
 const authRoutes = require('./src/routes/authRoutes');
+const authMiddleware = require('./src/middleware/authMiddleware');
 
 
 
@@ -21,6 +22,8 @@ const pool = new Pool({
 app.get('/', (req, res) => {
   res.send('Expense Tracker API is running');
 });
+
+
 
 // Test DB connection route
 app.get('/db-test', async (req, res) => {
