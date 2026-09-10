@@ -23,7 +23,23 @@ const createExpense = async (req, res) => {
 
 };  
 
+const getExpenses = async (req, res) => {
+    const userId = req.user.id; // Assuming you have user authentication and the user ID is available in req.user
+
+    try {
+        const result = await pool.query(
+            'SELECT * FROM expenses WHERE paid_by = $1 ORDER BY expense_date DESC',
+            [userId]
+        );
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error('Error fetching expenses:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};  
+
 module.exports = {
     createExpense,
+    getExpenses,
 };  
 
