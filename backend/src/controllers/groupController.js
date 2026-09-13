@@ -19,7 +19,7 @@ const createGroup = async (req, res) => {
             'INSERT INTO group_members (group_id, user_id) VALUES ($1, $2)',
             [groupId, userId]
         );  
-        
+
         res.status(201).json({ message: 'Group created successfully', groupId });
     } catch (err) {
         console.error('Error creating group:', err);
@@ -28,18 +28,21 @@ const createGroup = async (req, res) => {
 };
 
 const getGroups = async (req, res) => {
-    const userId = req.user.id; // Assuming you have user authentication and the user ID is available in req.user
+  const userId = req.user.id;
 
-    try {
-        const result = await pool.query(
-            'SELECT * FROM groups WHERE created_by = $1 ORDER BY name ASC',
-            [userId]
-        );
-        res.status(200).json(result.rows);
-    } catch (err) {
-        console.error('Error fetching groups:', err);
-        res.status(500).json({ message: 'Internal server error' });
-    }
+  try {
+    const result = await pool.query(
+      `SELECT groups.id, groups.name, groups.description
+       FROM group_members
+       JOIN groups ON group_members.group_id = groups.id
+       WHERE group_members.user_id = $1`,
+      [userId]
+    );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error('Error fetching groups:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 module.exports = {
