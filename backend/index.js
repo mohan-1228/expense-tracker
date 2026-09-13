@@ -3,6 +3,7 @@ const express = require('express');
 const { Pool } = require('pg');
 const authRoutes = require('./src/routes/authRoutes');
 const expenseRoutes = require('./src/routes/expenseRoutes');
+const groupRoutes = require('./src/routes/groupRoute'); // Import the group routes
 
 
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.use('/auth',authRoutes);
 app.use('/expenses', expenseRoutes);
+app.use('/groups', groupRoutes); // Use the group routes
 
 
 const port = process.env.PORT || 5001;
