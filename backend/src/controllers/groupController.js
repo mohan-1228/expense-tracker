@@ -45,7 +45,70 @@ const getGroups = async (req, res) => {
   }
 };
 
+const addGroupMember = async (req, res) => {
+    const { groupId } = req.params;
+    const {email } = req.body;
+    const userId = req.user.id; // Assuming you have user authentication and the user ID is available in req.user
+
+    try {
+        // Check if the requesting user is a member of the group
+        const membershipCheck = await pool.query(
+            'SELECT * FROM group_members WHERE group_id = $1 AND user_id = $2',
+            [groupId, userId]
+        );
+
+        if (membershipCheck.rows.length === 0) {
+            return res.status(403).json({ message: 'You are not a member of this group' });
+        }
+
+        // Check if the user to be added exists
+        const userCheck = await pool.query(
+            'SELECT id FROM users WHERE email = $1',
+            [email]
+        );
+
+        if (userCheck.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const userIdToAdd = userCheck.rows[0].id;
+
+        // Check if the user is already a member of the group
+        const existingMembership = await pool.query(
+            'SELECT * FROM group_members WHERE group_id = $1 AND user_id = $2',
+            [groupId, userIdToAdd]
+        );
+
+        if (existingMembership.rows.length > 0) {
+            return res.status(400).json({ message: 'User is already a member of this group' });
+        }
+
+        // Add the new member to the group
+        await pool.query(
+            'INSERT INTO group_members (group_id, user_id) VALUES ($1, $2)',
+            [groupId, userIdToAdd]
+        );
+
+        res.status(200).json({ message: 'Member added successfully' });
+    } catch (err) {
+        console.error('Error adding group member:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+    
+    
+
+
+
+
+
+
+
+
+
 module.exports = {
     createGroup,
-    getGroups
-};
+    getGroups,
+    addGroupMember
+};  
+
