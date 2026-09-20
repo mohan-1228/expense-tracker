@@ -95,6 +95,67 @@ const addGroupMember = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
+const getGroupBalances = async (req, res) => {
+  const { groupId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const membershipCheck = await pool.query(
+      'SELECT * FROM group_members WHERE group_id = $1 AND user_id = $2',
+      [groupId, userId]
+    );
+    if (membershipCheck.rows.length === 0) {
+      return res.status(403).json({ message: 'You are not a member of this group' });
+    }
+
+    const balanceResult = await pool.query(
+      `SELECT es.user_id AS owes_user, e.paid_by AS owed_to_user, SUM(es.share_amount) AS amount_owed
+       FROM expense_shares es
+       JOIN expenses e ON es.expense_id = e.id
+       WHERE e.group_id = $1 AND es.is_settled = false
+       GROUP BY es.user_id, e.paid_by`,
+      [groupId]
+    );
+
+    // Net the raw pairs together
+    const netMap = {};
+    balanceResult.rows.forEach(row => {
+      const owes = row.owes_user;
+      const owedTo = row.owed_to_user;
+      const amount = parseFloat(row.amount_owed);
+      const pairKey = [owes, owedTo].sort().join('-');
+
+      if (!netMap[pairKey]) {
+        netMap[pairKey] = 0;
+      }
+
+      if (owes < owedTo) {
+        netMap[pairKey] += amount;
+      } else {
+        netMap[pairKey] -= amount;
+      }
+    });
+
+    // Turn the net numbers into readable results
+    const balances = Object.entries(netMap).map(([pairKey, netAmount]) => {
+      const [idA, idB] = pairKey.split('-').map(Number);
+      if (netAmount === 0) {
+        return { userA: idA, userB: idB, status: 'settled' };
+      }
+      return netAmount > 0
+        ? { owes: idA, owedTo: idB, amount: netAmount }
+        : { owes: idB, owedTo: idA, amount: Math.abs(netAmount) };
+    });
+
+    res.status(200).json(balances);
+  } catch (err) {
+    console.error('Error fetching group balances:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
     
     
 
@@ -109,6 +170,7 @@ const addGroupMember = async (req, res) => {
 module.exports = {
     createGroup,
     getGroups,
-    addGroupMember
+    addGroupMember,
+    getGroupBalances
 };  
 
