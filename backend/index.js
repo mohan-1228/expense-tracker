@@ -3,7 +3,7 @@ const express = require('express');
 const { Pool } = require('pg');
 const authRoutes = require('./src/routes/authRoutes');
 const expenseRoutes = require('./src/routes/expenseRoutes');
-const groupRoutes = require('./src/routes/groupRoute'); // Import the group routes
+const groupRoutes = require('./src/routes/groupRoutes'); // Import the group routes
 
 
 
