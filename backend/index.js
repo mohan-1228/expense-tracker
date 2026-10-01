@@ -1,9 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
+const cron = require('node-cron');
+const generateRecurringExpenses = require('./src/jobs/generateRecurringExpenses');
 const authRoutes = require('./src/routes/authRoutes');
 const expenseRoutes = require('./src/routes/expenseRoutes');
-const groupRoutes = require('./src/routes/groupRoutes'); // Import the group routes
+const groupRoutes = require('./src/routes/groupRoutes');
+const categoryRoutes = require('./src/routes/categoriesRoutes');
+const recurringTemplatesRoutes = require('./src/routes/recurringTemplatesRoutes'); // Import the category routes
 
 
 
@@ -13,6 +17,14 @@ app.use(express.json());
 app.use('/auth',authRoutes);
 app.use('/expenses', expenseRoutes);
 app.use('/groups', groupRoutes); // Use the group routes
+app.use('/categories', categoryRoutes); // Use the category routes
+app.use('/recurring-templates', recurringTemplatesRoutes); // Use the recurring templates routes
+
+// Runs once daily at 6:00 AM server time
+cron.schedule('0 6 * * *', () => {
+  console.log('Running recurring expense generation job...');
+  generateRecurringExpenses();
+});
 
 
 const port = process.env.PORT || 5001;
