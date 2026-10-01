@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createExpense, getExpenses, updateExpense, deleteExpense} = require('../controllers/expenseController');
+const {createExpense, getExpenses, updateExpense, deleteExpense, settleShare} = require('../controllers/expenseController');
 const authMiddleware = require('../middleware/authMiddleware'); // Assuming you have an authentication middleware
 
 // Route to create a new expense
@@ -11,5 +11,8 @@ router.get('/', authMiddleware, getExpenses);
 router.put('/:id', authMiddleware, updateExpense); 
 // Route to delete an expense by ID
 router.delete('/:id', authMiddleware, deleteExpense);
+// Route to settle a share by ID
+router.patch('/shares/:shareId/settle', authMiddleware, settleShare);
+
 module.exports = router;
 

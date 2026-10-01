@@ -143,6 +143,39 @@ const createGroupExpense = async (req, res) => {
   }
 };
 
-module.exports = { createExpense, getExpenses, updateExpense, deleteExpense, createGroupExpense };
+const settleShare = async (req, res) => {
+    const { shareId } = req.params;
+    const userId = req.user.id;
+
+    try {
+        const shareCheck = await pool.query(
+            `SELECT es.id, es.user_id AS owes_user, e.paid_by AS payee
+            FROM expense_shares es
+            JOIN expenses e ON es.expense_id = e.id
+            WHERE es.id = $1`,
+            [shareId]
+        );
+
+        if (shareCheck.rows.length === 0) {
+            return res.status(404).json({ message: 'Share not found' });
+        }
+
+        const { owes_user, payee } = shareCheck.rows[0];
+
+        if (userId !== owes_user && userId !== payee) {
+            return res.status(403).json({ message: 'You do not have permission to settle this share' });
+        }
+        const result = await pool.query(
+            'UPDATE expense_shares SET is_settled = true WHERE id = $1',
+            [shareId]
+        );
+        res.status(200).json({ message: 'Share settled successfully', share: result.rows[0] });
+    } catch (err) {
+        console.error('Error settling share:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+module.exports = { createExpense, getExpenses, updateExpense, deleteExpense, createGroupExpense, settleShare  };
   
 
