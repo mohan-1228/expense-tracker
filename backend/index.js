@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const { Pool } = require('pg');
 const cron = require('node-cron');
@@ -14,6 +15,7 @@ const recurringTemplatesRoutes = require('./src/routes/recurringTemplatesRoutes'
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.use('/auth',authRoutes);
 app.use('/expenses', expenseRoutes);
