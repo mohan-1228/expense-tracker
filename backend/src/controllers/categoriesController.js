@@ -1,5 +1,4 @@
-const pool = require('../config/db'); // Assuming you have a database connection setup in '../db'
-
+const pool = require('../config/db'); 
 
 const getCategories = async (req, res) => {
   try {

@@ -166,7 +166,7 @@ const settleShare = async (req, res) => {
             return res.status(403).json({ message: 'You do not have permission to settle this share' });
         }
         const result = await pool.query(
-            'UPDATE expense_shares SET is_settled = true WHERE id = $1',
+            'UPDATE expense_shares SET is_settled = true WHERE id = $1 RETURNING *',
             [shareId]
         );
         res.status(200).json({ message: 'Share settled successfully', share: result.rows[0] });
