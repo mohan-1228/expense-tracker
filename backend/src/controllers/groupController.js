@@ -124,8 +124,8 @@ const getGroupBalances = async (req, res) => {
     balanceResult.rows.forEach(row => {
       const owes = row.owes_user;
       const owedTo = row.owed_to_user;
-      const amount = parseFloat(row.amount_owed);
-      const pairKey = [owes, owedTo].sort().join('-');
+      const amount = Math.round(parseFloat(row.amount_owed)*100);
+      const pairKey = [owes, owedTo].sort((a, b) => a - b).join('-');
 
       if (!netMap[pairKey]) {
         netMap[pairKey] = 0;
@@ -139,23 +139,81 @@ const getGroupBalances = async (req, res) => {
     });
 
     // Turn the net numbers into readable results
-    const balances = Object.entries(netMap).map(([pairKey, netAmount]) => {
+    const balances = Object.entries(netMap)
+      .map(([pairKey, netAmount]) => {
       const [idA, idB] = pairKey.split('-').map(Number);
       if (netAmount === 0) {
-        return { userA: idA, userB: idB, status: 'settled' };
+       return { userA: idA, userB: idB, status: 'settled' };
       }
       return netAmount > 0
-        ? { owes: idA, owedTo: idB, amount: netAmount }
-        : { owes: idB, owedTo: idA, amount: Math.abs(netAmount) };
+        ? { owes: idA, owedTo: idB, amount: netAmount/100 }
+        : { owes: idB, owedTo: idA, amount: Math.abs(netAmount)/100 };
+    })
+      .filter((b) => b.status !== 'settled');
+
+    const userIds = [...new Set(balances.flatMap((b) => [b.owes, b.owedTo]))];
+
+    if (userIds.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const usersResult = await pool.query(
+      'SELECT id, name FROM users WHERE id = ANY($1)',
+      [userIds]
+    );
+
+    const nameById = {};
+    usersResult.rows.forEach((u) => {
+      nameById[u.id] = u.name;
     });
 
-    res.status(200).json(balances);
+    const withNames = balances.map((b) => ({
+      ...b,
+      owesName: nameById[b.owes],
+      owedToName: nameById[b.owedTo],
+    }));
+
+res.status(200).json(withNames);
   } catch (err) {
     console.error('Error fetching group balances:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
+
+
+const getGroup = async (req, res) => {
+  const { groupId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const membershipCheck = await pool.query(
+      'SELECT 1 FROM group_members WHERE group_id = $1 AND user_id = $2',
+      [groupId, userId]
+    );
+    if (membershipCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    const groupResult = await pool.query(
+      'SELECT id, name, description FROM groups WHERE id = $1',
+      [groupId]
+    );
+
+    const membersResult = await pool.query(
+      'SELECT u.id, u.name, u.email FROM group_members gm JOIN users u ON gm.user_id = u.id WHERE gm.group_id = $1 ORDER BY u.name',
+      [groupId]
+    );
+
+    res.status(200).json({
+      ...groupResult.rows[0],
+      members: membersResult.rows,
+    });
+  } catch (err) {
+    console.error('Error fetching group:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
     
     
 
@@ -171,6 +229,7 @@ module.exports = {
     createGroup,
     getGroups,
     addGroupMember,
-    getGroupBalances
+    getGroupBalances,
+    getGroup
 };  
 

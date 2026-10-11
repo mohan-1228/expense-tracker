@@ -3,12 +3,13 @@ const pool = require('../config/db');
 const jwt = require('jsonwebtoken');
 
 const signup = async (req, res) => {
-    const { email, password, name } = req.body;
+    const { email: rawEmail, password, name } = req.body;
 
 
-    if(!email || !password || !name){
+    if(!rawEmail || !password || !name){
         return res.status(400).json({error: "Email, password and name are required  "});
     }
+    const email = rawEmail.trim().toLowerCase();
 
     try{
         const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
@@ -36,11 +37,12 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email: rawEmail, password } = req.body;
 
-    if(!email || !password){
+    if(!rawEmail || !password){
         return res.status(400).json({error: "Email and password are required"});
     }
+    const email = rawEmail.trim().toLowerCase();
 
     try{
         const userResult = await pool.query('SELECT id, email, password_hash FROM users WHERE email = $1', [email]);
