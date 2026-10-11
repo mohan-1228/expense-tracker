@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { login } from './api';
 
-export default function Login({ onLogin }) {
+export default function Login({ onLogin, onShowSignup, notice }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -15,7 +15,7 @@ export default function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      const data = await login(email, password);
+      const data = await login(email.trim().toLowerCase(), password);
 
       // Save authentication token
       localStorage.setItem('token', data.token);
@@ -62,6 +62,16 @@ export default function Login({ onLogin }) {
             Sign in to manage your finances.
           </p>
         </div>
+
+        {notice && (
+            <div
+                role="status"
+                className="mb-5 bg-emerald-50 border border-emerald-200 text-emerald-700
+                        text-sm px-4 py-3 rounded-xl"
+            >
+                {notice}
+            </div>
+        )}
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -154,12 +164,13 @@ export default function Login({ onLogin }) {
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-500">
             Don't have an account?{' '}
-            <a
-              href="/signup"
-              className="text-emerald-600 font-semibold hover:underline"
+            <button
+                type="button"
+                onClick={onShowSignup}
+                className="text-emerald-600 font-semibold hover:underline"
             >
-              Create an account
-            </a>
+                Create an account
+            </button>
           </p>
         </div>
 
@@ -167,29 +178,3 @@ export default function Login({ onLogin }) {
     </div>
   );
 }
-
-
-export async function apiFetch(path, options = {}) {
-  const token = localStorage.getItem('token');
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-      ...options.headers,
-    },
-  });
-
-  if (res.status === 401) {
-    localStorage.removeItem('token');
-    window.location.reload();
-    throw new Error('Session expired');
-
-  }
-
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Request failed');
-  return data;
-}
-
-export const getExpenses = () => apiFetch('/expenses');
