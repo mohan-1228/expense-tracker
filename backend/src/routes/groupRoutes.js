@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createGroup, getGroups, addGroupMember, getGroupBalances, getGroup } = require('../controllers/groupController');  
+const { createGroup, getGroups, addGroupMember, getGroupBalances, getGroup, settleWithMember } = require('../controllers/groupController');  
 const { createGroupExpense } = require('../controllers/expenseController'); // Import the createGroupExpense function
 const authMiddleware = require('../middleware/authMiddleware'); // Assuming you have an authentication middleware
 // Route to create a new group
@@ -12,5 +12,6 @@ router.post('/:groupId/members', authMiddleware, addGroupMember); // Route to ad
 router.post('/:groupId/expenses', authMiddleware, createGroupExpense);
 router.get('/:groupId/balance', authMiddleware, getGroupBalances);
 router.get('/:groupId', authMiddleware, getGroup);
+router.post('/:groupId/settle', authMiddleware, settleWithMember);
 
 module.exports = router;    

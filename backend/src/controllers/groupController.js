@@ -214,6 +214,60 @@ const getGroup = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+
+const settleWithMember = async (req, res) => {
+  const { groupId } = req.params;
+  const userId = req.user.id;
+  const withUserId = Number(req.body.withUserId);
+
+  if (!Number.isInteger(withUserId) || withUserId === userId) {
+    return res
+      .status(400)
+      .json({ message: 'A valid withUserId (another member) is required' });
+  }
+
+  try {
+    const membership = await pool.query(
+      'SELECT user_id FROM group_members WHERE group_id = $1 AND user_id = ANY($2)',
+      [groupId, [userId, withUserId]]
+    );
+    const memberIds = membership.rows.map((r) => r.user_id);
+
+    if (!memberIds.includes(userId)) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+    if (!memberIds.includes(withUserId)) {
+      return res.status(400).json({ message: 'That user is not in this group' });
+    }
+
+
+    const result = await pool.query(
+      `UPDATE expense_shares es
+      SET is_settled = true
+      FROM expenses e
+      WHERE es.expense_id = e.id
+        AND e.group_id = $1
+        AND es.is_settled = false
+        AND (
+          (es.user_id = $2 AND e.paid_by = $3)
+          OR (es.user_id = $3 AND e.paid_by = $2)
+        )
+      RETURNING es.id`,
+      [groupId, userId, withUserId]
+    );
+
+    res.status(200).json({
+      message: 'Settled',
+      settledShares: result.rowCount,
+    });
+
+    
+  } catch (err) {
+    console.error('Error settling with member:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
     
     
 
@@ -230,6 +284,7 @@ module.exports = {
     getGroups,
     addGroupMember,
     getGroupBalances,
-    getGroup
+    getGroup,
+    settleWithMember
 };  
 
