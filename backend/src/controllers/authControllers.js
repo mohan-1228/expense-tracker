@@ -45,7 +45,7 @@ const login = async (req, res) => {
     const email = rawEmail.trim().toLowerCase();
 
     try{
-        const userResult = await pool.query('SELECT id, email, password_hash FROM users WHERE email = $1', [email]);
+        const userResult = await pool.query('SELECT id, name, email, password_hash FROM users WHERE email = $1', [email]);
 
         if(userResult.rows.length === 0){
             return res.status(401).json({error: "Invalid email or password"});
@@ -61,7 +61,7 @@ const login = async (req, res) => {
 
         const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1h'});
 
-        res.status(200).json({message: "Login successful", token, user: {id: user.id, email: user.email}});
+        res.status(200).json({message: "Login successful", token, user: {id: user.id, name: user.name, email: user.email}});
 
     }catch (err){
         console.error(err);

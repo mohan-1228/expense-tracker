@@ -19,6 +19,7 @@ export default function Login({ onLogin, onShowSignup, notice }) {
 
       // Save authentication token
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
 
       // Notify parent component of successful login
       onLogin();

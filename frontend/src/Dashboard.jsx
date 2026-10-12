@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
 import {
   AreaChart,
@@ -24,6 +25,7 @@ import {
   RefreshCw,
   Sparkles,
   Plus,
+  Users,
 } from "lucide-react";
 
 import { getExpenses, getCategories } from "./api";
@@ -352,9 +354,25 @@ export default function Dashboard({ onLogout }) {
                 <Plus size={17} />
                 Add expense
             </button>
+
+
+            <Link
+                to="/groups"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 px-4 py-3 text-sm font-semibold  text-white shadow-sm hover:bg-slate-50 disabled:opacity-50"
+                >
+                <Users className="h-4 w-4" />
+                Groups
+            </Link>
+
             </div>
 
+
+            
+
         </section>
+
+
+
 
         {error && (
           <div role="alert" className="rounded-xl bg-red-50 p-4 text-red-700">
