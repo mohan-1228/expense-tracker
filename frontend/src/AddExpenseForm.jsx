@@ -7,6 +7,9 @@ export default function AddExpenseForm({
   defaultDate,
   onClose,
   onAdded,
+  submitExpense=createExpense,
+  title="Add expense",
+  note,
 }) {
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(defaultDate);
@@ -30,7 +33,7 @@ export default function AddExpenseForm({
     setSaving(true);
 
     try {
-      await createExpense({
+      await submitExpense({
         amount: parseFloat(amount),
         description,
         category_id: categoryId ? Number(categoryId) : null,
@@ -62,7 +65,8 @@ export default function AddExpenseForm({
         className="w-full max-w-md space-y-4 rounded-2xl bg-white p-6 shadow-xl"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold">Add expense</h3>
+          <h3 className="text-lg font-bold">{title}</h3>
+          {note && <p className="mt-1 text-sm text-gray-500">{note}</p>}
           <button
             type="button"
             onClick={onClose}

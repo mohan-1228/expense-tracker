@@ -24,11 +24,36 @@ const createExpense = async (req, res) => {
 };  
 
 const getExpenses = async (req, res) => {
-    const userId = req.user.id; // Assuming you have user authentication and the user ID is available in req.user
+    const userId = req.user.id;
 
     try {
         const result = await pool.query(
-            'SELECT * FROM expenses WHERE paid_by = $1 ORDER BY expense_date DESC',
+            `SELECT e.id, e.paid_by, e.category_id, e.amount, e.description,
+                    e.expense_date, e.group_id,
+                    false AS is_group,
+                    NULL::text AS group_name,
+                    NULL::text AS paid_by_name,
+                    e.amount AS total_amount,
+                    NULL::boolean AS is_settled
+             FROM expenses e
+             WHERE e.paid_by = $1 AND e.group_id IS NULL
+
+             UNION ALL
+
+             SELECT e.id, e.paid_by, e.category_id, es.share_amount AS amount, e.description,
+                    e.expense_date, e.group_id,
+                    true AS is_group,
+                    g.name AS group_name,
+                    u.name AS paid_by_name,
+                    e.amount AS total_amount,
+                    es.is_settled
+             FROM expense_shares es
+             JOIN expenses e ON es.expense_id = e.id
+             JOIN groups g ON e.group_id = g.id
+             JOIN users u ON e.paid_by = u.id
+             WHERE es.user_id = $1
+
+             ORDER BY expense_date DESC, id DESC`,
             [userId]
         );
         res.status(200).json(result.rows);
@@ -36,7 +61,7 @@ const getExpenses = async (req, res) => {
         console.error('Error fetching expenses:', err);
         res.status(500).json({ message: 'Internal server error' });
     }
-};  
+};
 
 const updateExpense = async (req, res) => {
     const { id } = req.params;

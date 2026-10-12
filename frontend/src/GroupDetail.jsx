@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import AddExpenseForm from './AddExpenseForm';
 import {
   getGroup,
   getGroupBalances,
   getCurrentUser,
   addGroupMember,
   settleWithMember,
+  getCategories,
+  createGroupExpense,
 } from './api';
 
 const money = (n) => `$${Number(n).toFixed(2)}`;
@@ -26,6 +29,16 @@ export default function GroupDetail() {
   const [email, setEmail] = useState('');
   const [adding, setAdding] = useState(false);
   const [memberError, setMemberError] = useState('');
+
+  const [categories, setCategories] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => {
+    getCategories()
+        .then(setCategories)
+        .catch((err) => console.error('Could not load categories', err));
+  }, []);
+
 
   useEffect(() => {
     let cancelled = false;
@@ -54,6 +67,14 @@ export default function GroupDetail() {
       cancelled = true;
     };
   }, [groupId, refresh]);
+
+
+  function todayLocal() {
+    const d = new Date();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${d.getFullYear()}-${mm}-${dd}`;
+}
 
   function describe(b) {
     if (b.owes === me?.id) {
@@ -114,9 +135,19 @@ export default function GroupDetail() {
 
         {group && (
           <>
-            <h1 className="mt-2 text-3xl font-bold text-gray-900">{group.name}</h1>
+            <div className="mt-2 flex items-center justify-between gap-3">
+                <h1 className="text-3xl font-bold text-gray-900">{group.name}</h1>
+                <button
+                    type="button"
+                    onClick={() => setShowForm(true)}
+                    className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500
+                            px-4 py-2 font-semibold text-white"
+                >
+                    + Add expense
+                </button>
+            </div>
             {group.description && (
-              <p className="mt-1 text-gray-500">{group.description}</p>
+                <p className="mt-1 text-gray-500">{group.description}</p>
             )}
 
             {/* Balances */}
@@ -207,6 +238,18 @@ export default function GroupDetail() {
                 <p className="mt-2 text-sm text-red-600">{memberError}</p>
               )}
             </section>
+            {showForm && (
+              <AddExpenseForm
+                categories={categories}
+                defaultDate={todayLocal()}
+                title="Add group expense"
+                note={`You paid. Split equally among ${group.members.length} members.`}
+                submitExpense={(expense) => createGroupExpense(groupId, expense)}
+                onClose={() => setShowForm(false)}
+                onAdded={() => setRefresh((v) => v + 1)}
+              />
+            )}
+            
           </>
         )}
       </div>

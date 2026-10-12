@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import ExpenseDetail from "./ExpenseDetail";
 
 import {
   AreaChart,
@@ -26,6 +27,7 @@ import {
   Sparkles,
   Plus,
   Users,
+  Star,
 } from "lucide-react";
 
 import { getExpenses, getCategories } from "./api";
@@ -104,6 +106,7 @@ export default function Dashboard({ onLogout }) {
   const [showForm, setShowForm] = useState(false);
 
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [detailExpense, setDetailExpense] = useState(null);
 
   // Load expenses from backend
   useEffect(() => {
@@ -771,36 +774,41 @@ export default function Dashboard({ onLogout }) {
                   </p>
                 </div>
               ) : (
+
                 selectedExpenses.map((expense) => (
-                  <div
-                    key={expense.id}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3"
-                  >
-                    <div className="flex min-w-0 items-center gap-3">
+                    <button
+                        type="button"
+                        key={`${expense.id}-${expense.is_group ? "g" : "p"}`}
+                        onClick={() => setDetailExpense(expense)}
+                        className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-100 p-3 text-left transition hover:border-violet-200 hover:bg-violet-50/40"
+                    >
+                        <div className="flex min-w-0 items-center gap-3">
+                        <span
+                            className="h-10 w-2 shrink-0 rounded-full"
+                            style={{ backgroundColor: getColor(expense.category) }}
+                        />
 
-                      <span
-                        className="h-10 w-2 shrink-0 rounded-full"
-                        style={{
-                          backgroundColor: getColor(expense.category),
-                        }}
-                      />
+                        <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold">
+                            {expense.description}
+                            {expense.is_group && (
+                                <Star
+                                    size={13}
+                                    className="ml-1.5 inline-block fill-orange-500 text-orange-500"
+                                    aria-label="Group expense"
+                                />
+                            )}
+                            </p>
 
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold">
-                          {expense.description}
-                        </p>
+                            <p className="text-xs text-slate-500">{expense.category}</p>
+                        </div>
+                        </div>
 
-                        <p className="text-xs text-slate-500">
-                          {expense.category}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span className="shrink-0 text-sm font-bold">
-                      {money(expense.amount)}
-                    </span>
-                  </div>
-                ))
+                        <span className="shrink-0 text-sm font-bold">
+                        {money(expense.amount)}
+                        </span>
+                    </button>
+                    ))
               )}
 
             </div>
@@ -818,6 +826,13 @@ export default function Dashboard({ onLogout }) {
             onClose={() => setShowForm(false)}
             onAdded={() => setRefresh((value) => value + 1)}
         />
+        )}
+
+        {detailExpense && (
+            <ExpenseDetail
+                expense={detailExpense}
+                onClose={() => setDetailExpense(null)}
+            />
         )}
     </div>
   );
