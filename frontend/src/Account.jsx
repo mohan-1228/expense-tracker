@@ -10,7 +10,7 @@ import {
 } from './api';
 
 const inputClass =
-  'w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500';
+  'w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-600';
 
 const TABS = [
   { id: 'profile', label: 'Profile' },
@@ -42,7 +42,7 @@ function ProfileTab() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-500">Name</label>
+        <label className="mb-1 block text-xs font-semibold text-brand-800">Name</label>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -51,7 +51,7 @@ function ProfileTab() {
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-500">Email</label>
+        <label className="mb-1 block text-xs font-semibold text-brand-800">Email</label>
         <input
           type="email"
           value={email}
@@ -64,8 +64,8 @@ function ProfileTab() {
       <button
         type="submit"
         disabled={saving}
-        className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500
-                   px-5 py-2 font-semibold text-white disabled:opacity-50"
+        className="rounded-xl bg-gradient-to-r from-brand-700 to-brand-900
+                   px-5 py-2 font-semibold text-brand-50 disabled:opacity-50"
       >
         {saving ? 'Saving...' : 'Save changes'}
       </button>
@@ -108,7 +108,7 @@ function PasswordTab() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-500">
+        <label className="mb-1 block text-xs font-semibold text-brand-800">
           Current password
         </label>
         <input
@@ -120,7 +120,7 @@ function PasswordTab() {
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-500">
+        <label className="mb-1 block text-xs font-semibold text-brand-800">
           New password
         </label>
         <input
@@ -133,7 +133,7 @@ function PasswordTab() {
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-500">
+        <label className="mb-1 block text-xs font-semibold text-brand-800">
           Confirm new password
         </label>
         <input
@@ -152,8 +152,8 @@ function PasswordTab() {
       <button
         type="submit"
         disabled={saving}
-        className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500
-                   px-5 py-2 font-semibold text-white disabled:opacity-50"
+        className="rounded-xl bg-gradient-to-r from-brand-700 to-brand-900
+                   px-5 py-2 font-semibold text-brand-50 disabled:opacity-50"
       >
         {saving ? 'Saving...' : 'Update password'}
       </button>
@@ -233,7 +233,7 @@ function CategoriesTab() {
   return (
     <div className="space-y-6">
       <form onSubmit={handleCreate} className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-900">Add a custom category</h3>
+        <h3 className="text-sm font-semibold text-brand-800">Add a custom category</h3>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -245,30 +245,30 @@ function CategoriesTab() {
         <button
           type="submit"
           disabled={creating}
-          className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500
-                     px-5 py-2 font-semibold text-white disabled:opacity-50"
+          className="rounded-xl bg-gradient-to-r from-brand-700 to-brand-900
+                     px-5 py-2 font-semibold text-brand-50 disabled:opacity-50"
         >
           {creating ? 'Adding...' : 'Add category'}
         </button>
       </form>
 
-      {loading && <p className="text-gray-500">Loading categories...</p>}
+      {loading && <p className="text-brand-700">Loading categories...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
       {!loading && !error && (
         <>
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">
+            <h3 className="text-sm font-semibold text-brand-800">
               Your categories ({customCategories.length})
             </h3>
             {deleteError && <p className="mt-2 text-sm text-red-600">{deleteError}</p>}
             {customCategories.length === 0 ? (
-              <p className="mt-3 text-gray-500">No custom categories yet. Add one above.</p>
+              <p className="mt-3 text-brand-700">No custom categories yet. Add one above.</p>
             ) : (
               <ul className="mt-3 divide-y divide-gray-100">
                 {customCategories.map((c) => (
                   <li key={c.id} className="flex items-center justify-between gap-3 py-3">
-                    <span className="font-medium text-gray-900">{c.name}</span>
+                    <span className="font-medium text-brand-900">{c.name}</span>
                     <button
                       type="button"
                       onClick={() => handleDelete(c)}
@@ -286,12 +286,12 @@ function CategoriesTab() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Default categories</h3>
+            <h3 className="text-sm font-semibold text-brand-800">Default categories</h3>
             <ul className="mt-3 flex flex-wrap gap-2">
               {defaultCategories.map((c) => (
                 <li
                   key={c.id}
-                  className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700"
+                  className="rounded-full bg-gray-100 px-3 py-1 text-sm text-brand-800"
                 >
                   {c.name}
                 </li>
@@ -310,12 +310,12 @@ export default function Account() {
   const activeTab = TABS.some((t) => t.id === requestedTab) ? requestedTab : 'profile';
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-brand-200 px-4 py-8">
       <div className="mx-auto max-w-2xl">
-        <Link to="/dashboard" className="text-sm text-violet-600 hover:underline">
+        <Link to="/dashboard" className="text-sm text-brand-700 hover:underline">
           ← Back to dashboard
         </Link>
-        <h1 className="mt-2 text-3xl font-bold text-gray-900">Account</h1>
+        <h1 className="mt-2 text-3xl font-bold text-brand-900">Account</h1>
 
         <div className="mt-6 flex gap-2 border-b border-gray-200">
           {TABS.map((tab) => (
@@ -325,8 +325,8 @@ export default function Account() {
               onClick={() => setSearchParams({ tab: tab.id })}
               className={`-mb-px border-b-2 px-4 py-2 text-sm font-semibold transition ${
                 activeTab === tab.id
-                  ? 'border-violet-600 text-violet-700'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-brand-700 text-brand-800'
+                  : 'border-transparent text-brand-700 hover:text-brand-800'
               }`}
             >
               {tab.label}

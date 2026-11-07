@@ -52,40 +52,40 @@ export default function Groups() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-brand-200 px-4 py-8">
       <div className="mx-auto max-w-3xl">
-        <Link to="/dashboard" className="text-sm text-violet-600 hover:underline">
+        <Link to="/dashboard" className="text-sm text-brand-700 hover:underline">
           ← Back to dashboard
         </Link>
-        <h1 className="mt-2 text-3xl font-bold text-gray-900">Groups</h1>
+        <h1 className="mt-2 text-3xl font-bold text-brand-900">Groups</h1>
 
         {/* Create group */}
         <form
           onSubmit={handleCreate}
           className="mt-6 rounded-2xl bg-white p-5 shadow space-y-3"
         >
-          <h2 className="font-semibold text-gray-900">Create a group</h2>
+          <h2 className="font-semibold text-brand-900">Create a group</h2>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Group name (e.g. Weekend trip)"
             required
             className="w-full rounded-xl border border-gray-300 px-4 py-2
-                       focus:outline-none focus:ring-2 focus:ring-violet-500"
+                       focus:outline-none focus:ring-2 focus:ring-brand-600"
           />
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description (optional)"
             className="w-full rounded-xl border border-gray-300 px-4 py-2
-                       focus:outline-none focus:ring-2 focus:ring-violet-500"
+                       focus:outline-none focus:ring-2 focus:ring-brand-600"
           />
           {formError && <p className="text-sm text-red-600">{formError}</p>}
           <button
             type="submit"
             disabled={creating}
-            className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500
-                       px-5 py-2 font-semibold text-white disabled:opacity-50"
+            className="rounded-xl bg-gradient-to-r from-brand-700 to-brand-900
+                       px-5 py-2 font-semibold text-brand-50 disabled:opacity-50"
           >
             {creating ? 'Creating...' : 'Create group'}
           </button>
@@ -93,10 +93,10 @@ export default function Groups() {
 
         {/* Group list */}
         <div className="mt-6 space-y-3">
-          {loading && <p className="text-gray-500">Loading groups...</p>}
+          {loading && <p className="text-brand-700">Loading groups...</p>}
           {error && <p className="text-red-600">{error}</p>}
           {!loading && !error && groups.length === 0 && (
-            <p className="text-gray-500">
+            <p className="text-brand-700">
               You are not in any groups yet. Create one above.
             </p>
           )}
@@ -106,9 +106,9 @@ export default function Groups() {
               to={`/groups/${g.id}`}
               className="block rounded-2xl bg-white p-5 shadow hover:shadow-md transition"
             >
-              <p className="font-semibold text-gray-900">{g.name}</p>
+              <p className="font-semibold text-brand-900">{g.name}</p>
               {g.description && (
-                <p className="mt-1 text-sm text-gray-500">{g.description}</p>
+                <p className="mt-1 text-sm text-brand-700">{g.description}</p>
               )}
             </Link>
           ))}

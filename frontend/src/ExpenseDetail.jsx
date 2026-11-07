@@ -22,8 +22,8 @@ function prettyDate(dateStr) {
 function Row({ label, children }) {
   return (
     <div className="flex items-start justify-between gap-4 border-b border-slate-100 py-3 last:border-0">
-      <span className="text-sm text-slate-500">{label}</span>
-      <span className="text-right text-sm font-semibold text-slate-800">
+      <span className="text-sm text-brand-700">{label}</span>
+      <span className="text-right text-sm font-semibold text-brand-900">
         {children}
       </span>
     </div>
@@ -86,14 +86,14 @@ export default function ExpenseDetail({ expense, onClose, onEdit, onDeleted }) {
                 />
               )}
             </h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-brand-700">
               {expense.is_group ? "Group expense" : "Personal expense"}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-2 py-1 text-slate-400 hover:bg-slate-100"
+            className="rounded-lg px-2 py-1 text-brand-700 hover:bg-slate-100"
             aria-label="Close"
           >
             ✕
@@ -116,7 +116,7 @@ export default function ExpenseDetail({ expense, onClose, onEdit, onDeleted }) {
               <Row label="Group">
                 <Link
                   to={`/groups/${expense.group_id}`}
-                  className="text-violet-600 hover:underline"
+                  className="text-brand-700 hover:underline"
                 >
                   {expense.group_name}
                 </Link>
@@ -136,7 +136,7 @@ export default function ExpenseDetail({ expense, onClose, onEdit, onDeleted }) {
         </div>
 
         {expense.is_group && (
-            <p className="mt-4 flex items-center gap-1.5 text-xs text-slate-400">
+            <p className="mt-4 flex items-center gap-1.5 text-xs text-brand-700">
                 <Star size={12} className="fill-orange-500 text-orange-500" />
                 Group expense. Your dashboard counts only your share.
             </p>

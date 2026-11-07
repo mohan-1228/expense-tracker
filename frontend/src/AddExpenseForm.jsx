@@ -55,7 +55,7 @@ export default function AddExpenseForm({
   }
 
   const inputClass =
-    "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-violet-500";
+    "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-600";
 
   return (
     <div
@@ -72,7 +72,7 @@ export default function AddExpenseForm({
       >
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold">{title}</h3>
-          {note && <p className="mt-1 text-sm text-gray-500">{note}</p>}
+          {note && <p className="mt-1 text-sm text-brand-700">{note}</p>}
           <button
             type="button"
             onClick={onClose}
@@ -84,7 +84,7 @@ export default function AddExpenseForm({
         </div>
 
         <div>
-          <label htmlFor="amount" className="mb-1 block text-xs font-semibold text-slate-500">
+          <label htmlFor="amount" className="mb-1 block text-xs font-semibold text-brand-800">
             Amount
           </label>
           <input
@@ -102,7 +102,7 @@ export default function AddExpenseForm({
         </div>
 
         <div>
-          <label htmlFor="date" className="mb-1 block text-xs font-semibold text-slate-500">
+          <label htmlFor="date" className="mb-1 block text-xs font-semibold text-brand-800">
             Date
           </label>
           <input
@@ -116,7 +116,7 @@ export default function AddExpenseForm({
         </div>
 
         <div>
-          <label htmlFor="category" className="mb-1 block text-xs font-semibold text-slate-500">
+          <label htmlFor="category" className="mb-1 block text-xs font-semibold text-brand-800">
             Category
           </label>
           <select
@@ -135,7 +135,7 @@ export default function AddExpenseForm({
         </div>
 
         <div>
-          <label htmlFor="description" className="mb-1 block text-xs font-semibold text-slate-500">
+          <label htmlFor="description" className="mb-1 block text-xs font-semibold text-brand-800">
             Description (optional)
           </label>
           <input
@@ -165,7 +165,7 @@ export default function AddExpenseForm({
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-50"
+            className="rounded-xl bg-gradient-to-br from-brand-700 to-brand-900 px-5 py-2 text-sm font-semibold text-brand-50 shadow-sm hover:opacity-90 disabled:opacity-50"
           >
             {saving ? "Saving..." : submitLabel}
           </button>

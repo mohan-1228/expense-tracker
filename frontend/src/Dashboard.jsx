@@ -265,15 +265,15 @@ export default function Dashboard({ onLogout }) {
     const intensity = amount / maxDailySpending;
 
     if (intensity > 0.75)
-      return "bg-purple-200 hover:bg-purple-300";
+      return "bg-brand-200 hover:bg-brand-200/80";
 
     if (intensity > 0.5)
-      return "bg-orange-200 hover:bg-orange-300";
+      return "bg-brand-200/60 hover:bg-brand-200";
 
     if (intensity > 0.25)
-      return "bg-emerald-200 hover:bg-emerald-300";
+      return "bg-brand-50 hover:bg-brand-200/40";
 
-    return "bg-sky-100 hover:bg-sky-200";
+    return "bg-brand-50/50 hover:bg-brand-50";
   }
 
   const selectedDateLabel = new Date(
@@ -287,22 +287,22 @@ export default function Dashboard({ onLogout }) {
   });
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] text-slate-800">
+    <div className="min-h-screen bg-brand-200 text-brand-900">
 
       {/* HEADER */}
-      <header className="border-b border-slate-200 bg-white">
+      <header className="border-b border-brand-700 bg-brand-600">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-5">
 
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 p-3 text-white">
+            <div className="rounded-xl bg-gradient-to-br from-brand-700 to-brand-900 p-3 text-brand-50">
               <Wallet size={24} />
             </div>
 
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight">
+              <h1 className="text-2xl font-extrabold tracking-tight text-brand-50">
                 Pennyroom
               </h1>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-brand-50">
                 Your money, made simple.
               </p>
             </div>
@@ -319,7 +319,7 @@ export default function Dashboard({ onLogout }) {
         <section className="flex flex-wrap items-center justify-between gap-4">
 
           <div>
-            <div className="mb-2 flex items-center gap-2 text-violet-600">
+            <div className="mb-2 flex items-center gap-2 text-brand-700">
               <Sparkles size={18} />
               <span className="text-sm font-semibold">
                 Your financial overview
@@ -330,7 +330,7 @@ export default function Dashboard({ onLogout }) {
               Spending Dashboard
             </h2>
 
-            <p className="mt-2 text-slate-500">
+            <p className="mt-2 text-brand-700">
               Understand where your money goes.
             </p>
           </div>
@@ -347,7 +347,7 @@ export default function Dashboard({ onLogout }) {
 
             <button
                 onClick={() => setShowForm(true)}
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-90"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-brand-700 to-brand-900 px-4 py-3 text-sm font-semibold text-brand-50 shadow-sm hover:opacity-90"
             >
                 <Plus size={17} />
                 Add expense
@@ -356,7 +356,7 @@ export default function Dashboard({ onLogout }) {
 
             <Link
                 to="/groups"
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 px-4 py-3 text-sm font-semibold  text-white shadow-sm hover:bg-slate-50 disabled:opacity-50"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-4 py-3 text-sm font-semibold  text-brand-50 shadow-sm hover:bg-slate-50 disabled:opacity-50"
                 >
                 <Users className="h-4 w-4" />
                 Groups
@@ -379,7 +379,7 @@ export default function Dashboard({ onLogout }) {
         )}
 
         {loading && (
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-brand-700">
             Loading your expenses...
           </p>
         )}
@@ -387,52 +387,52 @@ export default function Dashboard({ onLogout }) {
         {/* SUMMARY CARDS */}
         <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
-          <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 p-6 text-white shadow-lg shadow-violet-200/50">
+          <div className="rounded-2xl bg-gradient-to-br from-brand-900 to-brand-800 p-6 text-brand-50 shadow-lg shadow-brand-900/20">
             <Wallet className="mb-5 opacity-80" size={25} />
-            <p className="text-sm text-violet-100">Total Spent</p>
+            <p className="text-sm text-brand-50/70">Total Spent</p>
             <h3 className="mt-2 text-3xl font-bold">
               {money(totalSpent)}
             </h3>
-            <p className="mt-3 text-xs text-violet-100">
+            <p className="mt-3 text-xs text-brand-50/70">
               {monthName}
             </p>
           </div>
 
-          <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-white shadow-lg shadow-emerald-200/50">
+          <div className="rounded-2xl bg-gradient-to-br from-brand-800 to-brand-700 p-6 text-brand-50 shadow-lg shadow-brand-900/20">
             <Receipt className="mb-5 opacity-80" size={25} />
-            <p className="text-sm text-emerald-100">
+            <p className="text-sm text-brand-50/70">
               Transactions
             </p>
             <h3 className="mt-2 text-3xl font-bold">
               {monthlyExpenses.length}
             </h3>
-            <p className="mt-3 text-xs text-emerald-100">
+            <p className="mt-3 text-xs text-brand-50/70">
               Expenses recorded this month
             </p>
           </div>
 
-          <div className="rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 p-6 text-white shadow-lg shadow-orange-200/50">
+          <div className="rounded-2xl bg-gradient-to-br from-brand-700 to-brand-600 p-6 text-brand-50 shadow-lg shadow-brand-900/20">
             <TrendingUp className="mb-5 opacity-80" size={25} />
-            <p className="text-sm text-orange-100">
+            <p className="text-sm text-brand-50/70">
               Daily Average
             </p>
             <h3 className="mt-2 text-3xl font-bold">
               {money(dailyAverage)}
             </h3>
-            <p className="mt-3 text-xs text-orange-100">
+            <p className="mt-3 text-xs text-brand-50/70">
               Average across calendar days
             </p>
           </div>
 
-          <div className="rounded-2xl bg-gradient-to-br from-pink-500 to-fuchsia-600 p-6 text-white shadow-lg shadow-pink-200/50">
+          <div className="rounded-2xl bg-gradient-to-br from-brand-600 to-brand-900 p-6 text-brand-50 shadow-lg shadow-brand-900/20">
             <CalendarDays className="mb-5 opacity-80" size={25} />
-            <p className="text-sm text-pink-100">
+            <p className="text-sm text-brand-50/70">
               Top Spending Category
             </p>
             <h3 className="mt-2 truncate text-2xl font-bold">
               {topCategory}
             </h3>
-            <p className="mt-3 text-xs text-pink-100">
+            <p className="mt-3 text-xs text-brand-50/70">
               Highest spending this month
             </p>
           </div>
@@ -449,7 +449,7 @@ export default function Dashboard({ onLogout }) {
               <h3 className="text-lg font-bold">
                 Spending Trends
               </h3>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-brand-700">
                 Daily expenses for {monthName}
               </p>
             </div>
@@ -516,7 +516,7 @@ export default function Dashboard({ onLogout }) {
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex h-full items-center justify-center text-sm text-slate-400">
+                <div className="flex h-full items-center justify-center text-sm text-brand-600">
                   No spending data for this month.
                 </div>
               )}
@@ -531,7 +531,7 @@ export default function Dashboard({ onLogout }) {
               Spending by Category
             </h3>
 
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-brand-700">
               Where your money went
             </p>
 
@@ -578,7 +578,7 @@ export default function Dashboard({ onLogout }) {
                       }
                       className={`flex w-full items-center justify-between rounded-lg px-2 py-2 text-sm hover:bg-slate-50 ${
                         categoryFilter === category.name
-                          ? "bg-violet-50 ring-1 ring-violet-200"
+                          ? "bg-brand-50 ring-1 ring-brand-200"
                           : ""
                       }`}
                     >
@@ -602,14 +602,14 @@ export default function Dashboard({ onLogout }) {
                 {categoryFilter !== "All" && (
                   <button
                     onClick={() => setCategoryFilter("All")}
-                    className="mt-4 text-sm font-medium text-violet-600 hover:underline"
+                    className="mt-4 text-sm font-medium text-brand-700 hover:underline"
                   >
                     Clear category filter
                   </button>
                 )}
               </>
             ) : (
-              <div className="flex h-72 items-center justify-center text-sm text-slate-400">
+              <div className="flex h-72 items-center justify-center text-sm text-brand-600">
                 No category data yet.
               </div>
             )}
@@ -629,12 +629,12 @@ export default function Dashboard({ onLogout }) {
                 <h3 className="flex items-center gap-2 text-lg font-bold">
                   <CalendarDays
                     size={21}
-                    className="text-violet-600"
+                    className="text-brand-700"
                   />
                   Expense Calendar
                 </h3>
 
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-brand-700">
                   Select a date to view transactions.
                 </p>
               </div>
@@ -669,7 +669,7 @@ export default function Dashboard({ onLogout }) {
                 (day) => (
                   <div
                     key={day}
-                    className="pb-3 text-xs font-semibold text-slate-400"
+                    className="pb-3 text-xs font-semibold text-brand-600"
                   >
                     {day}
                   </div>
@@ -696,7 +696,7 @@ export default function Dashboard({ onLogout }) {
                       ${getDayColor(day.total)}
                       ${
                         selected
-                          ? "ring-2 ring-violet-600 ring-offset-2"
+                          ? "ring-2 ring-brand-700 ring-offset-2"
                           : ""
                       }
                     `}
@@ -716,14 +716,14 @@ export default function Dashboard({ onLogout }) {
 
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-brand-700">
               <span>Spending intensity:</span>
 
               {[
-                ["Low", "bg-sky-100"],
-                ["Medium", "bg-emerald-200"],
-                ["High", "bg-orange-200"],
-                ["Very high", "bg-purple-200"],
+                ["Low", "bg-brand-50/50"],
+                ["Medium", "bg-brand-50"],
+                ["High", "bg-brand-200/60"],
+                ["Very high", "bg-brand-200"],
               ].map(([label, color]) => (
                 <span key={label} className="flex items-center gap-1.5">
                   <span className={`h-3 w-3 rounded ${color}`} />
@@ -741,16 +741,16 @@ export default function Dashboard({ onLogout }) {
               Daily Transactions
             </h3>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-brand-700">
               {selectedDateLabel}
             </p>
 
-            <div className="my-5 rounded-xl bg-violet-50 p-4">
-              <p className="text-xs font-medium text-violet-600">
+            <div className="my-5 rounded-xl bg-brand-50 p-4">
+              <p className="text-xs font-medium text-brand-700">
                 Total spent
               </p>
 
-              <p className="mt-1 text-3xl font-bold text-violet-700">
+              <p className="mt-1 text-3xl font-bold text-brand-800">
                 {money(selectedTotal)}
               </p>
             </div>
@@ -760,11 +760,11 @@ export default function Dashboard({ onLogout }) {
               {selectedExpenses.length === 0 ? (
                 <div className="rounded-xl bg-slate-50 p-6 text-center">
                   <CalendarDays
-                    className="mx-auto mb-3 text-slate-300"
+                    className="mx-auto mb-3 text-brand-600"
                     size={30}
                   />
 
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-brand-700">
                     No matching expenses for this date.
                   </p>
                 </div>
@@ -775,7 +775,7 @@ export default function Dashboard({ onLogout }) {
                         type="button"
                         key={`${expense.id}-${expense.is_group ? "g" : "p"}`}
                         onClick={() => setDetailExpense(expense)}
-                        className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-100 p-3 text-left transition hover:border-violet-200 hover:bg-violet-50/40"
+                        className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-100 p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
                     >
                         <div className="flex min-w-0 items-center gap-3">
                         <span
@@ -795,7 +795,7 @@ export default function Dashboard({ onLogout }) {
                             )}
                             </p>
 
-                            <p className="text-xs text-slate-500">{expense.category}</p>
+                            <p className="text-xs text-brand-700">{expense.category}</p>
                         </div>
                         </div>
 

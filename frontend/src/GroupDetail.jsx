@@ -107,7 +107,7 @@ export default function GroupDetail() {
     if (b.owedTo === me?.id) {
       return { text: `${b.owesName} owes you`, color: 'text-emerald-600' };
     }
-    return { text: `${b.owesName} owes ${b.owedToName}`, color: 'text-gray-700' };
+    return { text: `${b.owesName} owes ${b.owedToName}`, color: 'text-brand-800' };
   }
 
   async function handleSettle(b) {
@@ -219,25 +219,25 @@ export default function GroupDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-brand-200 px-4 py-8">
       <div className="mx-auto max-w-3xl">
-        <Link to="/groups" className="text-sm text-violet-600 hover:underline">
+        <Link to="/groups" className="text-sm text-brand-700 hover:underline">
           ← Back to groups
         </Link>
 
-        {loading && !group && <p className="mt-6 text-gray-500">Loading...</p>}
+        {loading && !group && <p className="mt-6 text-brand-700">Loading...</p>}
         {error && <p className="mt-6 text-red-600">{error}</p>}
 
         {group && (
           <>
             <div className="mt-2 flex items-center justify-between gap-3">
-                <h1 className="text-3xl font-bold text-gray-900">{group.name}</h1>
+                <h1 className="text-3xl font-bold text-brand-900">{group.name}</h1>
                 <div className="flex items-center gap-2">
                   <button
                       type="button"
                       onClick={() => setShowForm(true)}
-                      className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500
-                              px-4 py-2 font-semibold text-white"
+                      className="rounded-xl bg-gradient-to-r from-brand-700 to-brand-900
+                              px-4 py-2 font-semibold text-brand-50"
                   >
                       + Add expense
                   </button>
@@ -267,7 +267,7 @@ export default function GroupDetail() {
                 </div>
             </div>
             {group.description && (
-                <p className="mt-1 text-gray-500">{group.description}</p>
+                <p className="mt-1 text-brand-700">{group.description}</p>
             )}
             {groupActionError && (
                 <p className="mt-2 text-sm text-red-600">{groupActionError}</p>
@@ -275,12 +275,12 @@ export default function GroupDetail() {
 
             {/* Balances */}
             <section className="mt-6 rounded-2xl bg-white p-5 shadow">
-              <h2 className="font-semibold text-gray-900">Balances</h2>
+              <h2 className="font-semibold text-brand-900">Balances</h2>
               {actionError && (
                 <p className="mt-2 text-sm text-red-600">{actionError}</p>
               )}
               {balances.length === 0 ? (
-                <p className="mt-3 text-gray-500">Everyone is settled up.</p>
+                <p className="mt-3 text-brand-700">Everyone is settled up.</p>
               ) : (
                 <ul className="mt-3 divide-y divide-gray-100">
                   {balances.map((b) => {
@@ -303,9 +303,9 @@ export default function GroupDetail() {
                               type="button"
                               onClick={() => handleSettle(b)}
                               disabled={settlingId === otherId}
-                              className="rounded-xl border border-violet-200 bg-white
-                                         px-3 py-1.5 text-sm font-semibold text-violet-700
-                                         transition hover:bg-violet-50
+                              className="rounded-xl border border-brand-200 bg-white
+                                         px-3 py-1.5 text-sm font-semibold text-brand-800
+                                         transition hover:bg-brand-50
                                          disabled:opacity-50"
                             >
                               {settlingId === otherId ? 'Settling...' : 'Settle'}
@@ -321,14 +321,14 @@ export default function GroupDetail() {
 
             {/* Expenses */}
             <section className="mt-6 rounded-2xl bg-white p-5 shadow">
-              <h2 className="font-semibold text-gray-900">
+              <h2 className="font-semibold text-brand-900">
                 Expenses ({expenses.length})
               </h2>
               {expenseError && (
                 <p className="mt-2 text-sm text-red-600">{expenseError}</p>
               )}
               {expenses.length === 0 ? (
-                <p className="mt-3 text-gray-500">No expenses yet.</p>
+                <p className="mt-3 text-brand-700">No expenses yet.</p>
               ) : (
                 <ul className="mt-3 divide-y divide-gray-100">
                   {expenses
@@ -342,17 +342,17 @@ export default function GroupDetail() {
                           className="flex items-center justify-between gap-3 py-3"
                         >
                           <div className="min-w-0">
-                            <p className="truncate font-medium text-gray-900">
+                            <p className="truncate font-medium text-brand-900">
                               {expense.description || 'Untitled expense'}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-brand-700">
                               {canManage ? 'You' : expense.paid_by_name} paid ·{' '}
                               {categoryNameById[expense.category_id] || 'No category'} ·{' '}
                               {expense.expense_date}
                             </p>
                           </div>
                           <div className="flex items-center gap-3">
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-brand-900">
                               {money(expense.total_amount)}
                             </span>
                             {canManage && (
@@ -360,9 +360,9 @@ export default function GroupDetail() {
                                 <button
                                   type="button"
                                   onClick={() => handleEdit(expense)}
-                                  className="rounded-xl border border-violet-200 bg-white
-                                             px-3 py-1.5 text-sm font-semibold text-violet-700
-                                             transition hover:bg-violet-50"
+                                  className="rounded-xl border border-brand-200 bg-white
+                                             px-3 py-1.5 text-sm font-semibold text-brand-800
+                                             transition hover:bg-brand-50"
                                 >
                                   Edit
                                 </button>
@@ -388,7 +388,7 @@ export default function GroupDetail() {
 
             {/* Members */}
             <section className="mt-6 rounded-2xl bg-white p-5 shadow">
-              <h2 className="font-semibold text-gray-900">
+              <h2 className="font-semibold text-brand-900">
                 Members ({group.members.length})
               </h2>
               {memberActionError && (
@@ -398,13 +398,13 @@ export default function GroupDetail() {
                 {group.members.map((m) => (
                   <li key={m.id} className="flex items-center justify-between gap-3 py-3">
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-brand-900">
                         {m.name}
                         {m.id === me?.id && (
-                          <span className="ml-2 text-xs text-violet-600">(you)</span>
+                          <span className="ml-2 text-xs text-brand-700">(you)</span>
                         )}
                       </p>
-                      <p className="text-sm text-gray-500">{m.email}</p>
+                      <p className="text-sm text-brand-700">{m.email}</p>
                     </div>
                     {isCreator && m.id !== me?.id && (
                       <button
@@ -430,13 +430,13 @@ export default function GroupDetail() {
                   placeholder="Add a member by email"
                   required
                   className="flex-1 rounded-xl border border-gray-300 px-4 py-2
-                             focus:outline-none focus:ring-2 focus:ring-violet-500"
+                             focus:outline-none focus:ring-2 focus:ring-brand-600"
                 />
                 <button
                   type="submit"
                   disabled={adding}
-                  className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500
-                             px-4 py-2 font-semibold text-white disabled:opacity-50"
+                  className="rounded-xl bg-gradient-to-r from-brand-700 to-brand-900
+                             px-4 py-2 font-semibold text-brand-50 disabled:opacity-50"
                 >
                   {adding ? 'Adding...' : 'Add'}
                 </button>

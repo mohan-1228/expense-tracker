@@ -32,29 +32,29 @@ export default function Signup({ onSignedUp, onShowLogin }) {
 
   const inputClass =
     'w-full px-4 py-3 border border-gray-300 rounded-xl ' +
-    'focus:outline-none focus:ring-2 focus:ring-emerald-500 ' +
+    'focus:outline-none focus:ring-2 focus:ring-brand-600 ' +
     'focus:border-transparent transition';
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-brand-200 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         {/* Logo and App Name */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-2xl font-bold">$</span>
+          <div className="w-14 h-14 bg-brand-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span className="text-brand-50 text-2xl font-bold">$</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Pennyroom</h1>
-          <p className="text-gray-500 mt-2 text-sm">
+          <h1 className="text-3xl font-bold text-brand-900">Pennyroom</h1>
+          <p className="text-brand-700 mt-2 text-sm">
             Track and split expenses with friends
           </p>
         </div>
 
         {/* Welcome Text */}
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-900">
+          <h2 className="text-2xl font-semibold text-brand-900">
             Create your account
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-brand-700 mt-1">
             Sign up to manage your finances.
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function Signup({ onSignedUp, onShowLogin }) {
           <div>
             <label
               htmlFor="name"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-brand-800 mb-2"
             >
               Full Name
             </label>
@@ -85,7 +85,7 @@ export default function Signup({ onSignedUp, onShowLogin }) {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-brand-800 mb-2"
             >
               Email Address
             </label>
@@ -105,7 +105,7 @@ export default function Signup({ onSignedUp, onShowLogin }) {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-brand-800 mb-2"
             >
               Password
             </label>
@@ -125,7 +125,7 @@ export default function Signup({ onSignedUp, onShowLogin }) {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2
-                           text-sm text-gray-500 hover:text-emerald-600"
+                           text-sm text-brand-700 hover:text-brand-800"
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
@@ -136,7 +136,7 @@ export default function Signup({ onSignedUp, onShowLogin }) {
           <div>
             <label
               htmlFor="confirm"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-brand-800 mb-2"
             >
               Confirm Password
             </label>
@@ -155,7 +155,7 @@ export default function Signup({ onSignedUp, onShowLogin }) {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2
-                           text-sm text-gray-500 hover:text-emerald-600"
+                           text-sm text-brand-700 hover:text-brand-800"
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
@@ -177,8 +177,8 @@ export default function Signup({ onSignedUp, onShowLogin }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-emerald-600 text-white font-semibold
-                       py-3 rounded-xl hover:bg-emerald-700
+            className="w-full bg-brand-700 text-brand-50 font-semibold
+                       py-3 rounded-xl hover:bg-brand-800
                        transition duration-200
                        disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -188,12 +188,12 @@ export default function Signup({ onSignedUp, onShowLogin }) {
 
         {/* Back to login */}
         <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-brand-700">
             Already have an account?{' '}
             <button
               type="button"
               onClick={onShowLogin}
-              className="text-emerald-600 font-semibold hover:underline"
+              className="text-brand-700 font-semibold hover:underline"
             >
               Sign in
             </button>

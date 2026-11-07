@@ -32,22 +32,22 @@ export default function Login({ onLogin, onShowSignup, notice }) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-brand-200 px-4">
 
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
 
         {/* Logo and App Name */}
         <div className="text-center mb-8">
 
-          <div className="w-14 h-14 bg-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-2xl font-bold">$</span>
+          <div className="w-14 h-14 bg-brand-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span className="text-brand-50 text-2xl font-bold">$</span>
           </div>
 
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-brand-900">
             Pennyroom
           </h1>
 
-          <p className="text-gray-500 mt-2 text-sm">
+          <p className="text-brand-700 mt-2 text-sm">
             Your AI-powered expense tracker
           </p>
 
@@ -55,11 +55,11 @@ export default function Login({ onLogin, onShowSignup, notice }) {
 
         {/* Welcome Text */}
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-900">
+          <h2 className="text-2xl font-semibold text-brand-900">
             Welcome back
           </h2>
 
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-brand-700 mt-1">
             Sign in to manage your finances.
           </p>
         </div>
@@ -67,7 +67,7 @@ export default function Login({ onLogin, onShowSignup, notice }) {
         {notice && (
             <div
                 role="status"
-                className="mb-5 bg-emerald-50 border border-emerald-200 text-emerald-700
+                className="mb-5 bg-brand-50 border border-brand-200 text-brand-800
                         text-sm px-4 py-3 rounded-xl"
             >
                 {notice}
@@ -81,7 +81,7 @@ export default function Login({ onLogin, onShowSignup, notice }) {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-brand-800 mb-2"
             >
               Email Address
             </label>
@@ -95,7 +95,7 @@ export default function Login({ onLogin, onShowSignup, notice }) {
               autoComplete="email"
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-xl
-                         focus:outline-none focus:ring-2 focus:ring-emerald-500
+                         focus:outline-none focus:ring-2 focus:ring-brand-600
                          focus:border-transparent transition"
             />
           </div>
@@ -104,7 +104,7 @@ export default function Login({ onLogin, onShowSignup, notice }) {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-brand-800 mb-2"
             >
               Password
             </label>
@@ -120,7 +120,7 @@ export default function Login({ onLogin, onShowSignup, notice }) {
                 autoComplete="current-password"
                 required
                 className="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl
-                           focus:outline-none focus:ring-2 focus:ring-emerald-500
+                           focus:outline-none focus:ring-2 focus:ring-brand-600
                            focus:border-transparent transition"
               />
 
@@ -128,7 +128,7 @@ export default function Login({ onLogin, onShowSignup, notice }) {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2
-                           text-sm text-gray-500 hover:text-emerald-600"
+                           text-sm text-brand-700 hover:text-brand-800"
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
@@ -151,8 +151,8 @@ export default function Login({ onLogin, onShowSignup, notice }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-emerald-600 text-white font-semibold
-                       py-3 rounded-xl hover:bg-emerald-700
+            className="w-full bg-brand-700 text-brand-50 font-semibold
+                       py-3 rounded-xl hover:bg-brand-800
                        transition duration-200
                        disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -163,12 +163,12 @@ export default function Login({ onLogin, onShowSignup, notice }) {
 
         {/* Signup Link */}
         <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-brand-700">
             Don't have an account?{' '}
             <button
                 type="button"
                 onClick={onShowSignup}
-                className="text-emerald-600 font-semibold hover:underline"
+                className="text-brand-700 font-semibold hover:underline"
             >
                 Create an account
             </button>
