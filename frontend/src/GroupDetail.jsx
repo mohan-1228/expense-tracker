@@ -9,6 +9,9 @@ import {
   settleWithMember,
   getCategories,
   createGroupExpense,
+  getExpenses,
+  updateGroupExpense,
+  deleteGroupExpense,
 } from './api';
 
 const money = (n) => `$${Number(n).toFixed(2)}`;
@@ -19,9 +22,14 @@ export default function GroupDetail() {
 
   const [group, setGroup] = useState(null);
   const [balances, setBalances] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [refresh, setRefresh] = useState(0);
+
+  const [editingExpense, setEditingExpense] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [expenseError, setExpenseError] = useState('');
 
   const [settlingId, setSettlingId] = useState(null);
   const [actionError, setActionError] = useState('');
@@ -47,13 +55,19 @@ export default function GroupDetail() {
       try {
         setLoading(true);
         setError('');
-        const [groupData, balanceData] = await Promise.all([
+        const [groupData, balanceData, allExpenses] = await Promise.all([
           getGroup(groupId),
           getGroupBalances(groupId),
+          getExpenses(),
         ]);
         if (!cancelled) {
           setGroup(groupData);
           setBalances(balanceData);
+          setExpenses(
+            (Array.isArray(allExpenses) ? allExpenses : []).filter(
+              (e) => String(e.group_id) === String(groupId)
+            )
+          );
         }
       } catch (err) {
         if (!cancelled) setError(err.message);
@@ -120,6 +134,29 @@ export default function GroupDetail() {
       setMemberError(err.message);
     } finally {
       setAdding(false);
+    }
+  }
+
+  const categoryNameById = Object.fromEntries(categories.map((c) => [c.id, c.name]));
+
+  function handleEdit(expense) {
+    setExpenseError('');
+    setEditingExpense(expense);
+  }
+
+  async function handleDelete(expense) {
+    const ok = window.confirm(`Delete "${expense.description || 'this expense'}"?`);
+    if (!ok) return;
+
+    setExpenseError('');
+    setDeletingId(expense.id);
+    try {
+      await deleteGroupExpense(groupId, expense.id);
+      setRefresh((v) => v + 1);
+    } catch (err) {
+      setExpenseError(err.message);
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -196,6 +233,73 @@ export default function GroupDetail() {
               )}
             </section>
 
+            {/* Expenses */}
+            <section className="mt-6 rounded-2xl bg-white p-5 shadow">
+              <h2 className="font-semibold text-gray-900">
+                Expenses ({expenses.length})
+              </h2>
+              {expenseError && (
+                <p className="mt-2 text-sm text-red-600">{expenseError}</p>
+              )}
+              {expenses.length === 0 ? (
+                <p className="mt-3 text-gray-500">No expenses yet.</p>
+              ) : (
+                <ul className="mt-3 divide-y divide-gray-100">
+                  {expenses
+                    .slice()
+                    .sort((a, b) => (a.expense_date < b.expense_date ? 1 : -1))
+                    .map((expense) => {
+                      const canManage = me && expense.paid_by === me.id;
+                      return (
+                        <li
+                          key={expense.id}
+                          className="flex items-center justify-between gap-3 py-3"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate font-medium text-gray-900">
+                              {expense.description || 'Untitled expense'}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {canManage ? 'You' : expense.paid_by_name} paid ·{' '}
+                              {categoryNameById[expense.category_id] || 'No category'} ·{' '}
+                              {expense.expense_date}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="font-semibold text-gray-900">
+                              {money(expense.total_amount)}
+                            </span>
+                            {canManage && (
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleEdit(expense)}
+                                  className="rounded-xl border border-violet-200 bg-white
+                                             px-3 py-1.5 text-sm font-semibold text-violet-700
+                                             transition hover:bg-violet-50"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDelete(expense)}
+                                  disabled={deletingId === expense.id}
+                                  className="rounded-xl border border-red-200 bg-white
+                                             px-3 py-1.5 text-sm font-semibold text-red-600
+                                             transition hover:bg-red-50 disabled:opacity-50"
+                                >
+                                  {deletingId === expense.id ? 'Deleting...' : 'Delete'}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                </ul>
+              )}
+            </section>
+
             {/* Members */}
             <section className="mt-6 rounded-2xl bg-white p-5 shadow">
               <h2 className="font-semibold text-gray-900">
@@ -249,7 +353,28 @@ export default function GroupDetail() {
                 onAdded={() => setRefresh((v) => v + 1)}
               />
             )}
-            
+
+            {editingExpense && (
+              <AddExpenseForm
+                categories={categories}
+                defaultDate={editingExpense.expense_date}
+                title="Edit group expense"
+                submitLabel="Save changes"
+                note={`Re-splits the total evenly among ${group.members.length} members.`}
+                initialExpense={{
+                  amount: editingExpense.total_amount,
+                  expense_date: editingExpense.expense_date,
+                  description: editingExpense.description,
+                  category_id: editingExpense.category_id,
+                }}
+                submitExpense={(expense) =>
+                  updateGroupExpense(groupId, editingExpense.id, expense)
+                }
+                onClose={() => setEditingExpense(null)}
+                onAdded={() => setRefresh((v) => v + 1)}
+              />
+            )}
+
           </>
         )}
       </div>

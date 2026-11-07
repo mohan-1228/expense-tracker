@@ -10,11 +10,17 @@ export default function AddExpenseForm({
   submitExpense=createExpense,
   title="Add expense",
   note,
+  initialExpense=null,
+  submitLabel="Save expense",
 }) {
-  const [amount, setAmount] = useState("");
-  const [date, setDate] = useState(defaultDate);
-  const [description, setDescription] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [amount, setAmount] = useState(
+    initialExpense ? String(initialExpense.amount) : ""
+  );
+  const [date, setDate] = useState(initialExpense?.expense_date || defaultDate);
+  const [description, setDescription] = useState(initialExpense?.description || "");
+  const [categoryId, setCategoryId] = useState(
+    initialExpense?.category_id ? String(initialExpense.category_id) : ""
+  );
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -161,7 +167,7 @@ export default function AddExpenseForm({
             disabled={saving}
             className="rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-50"
           >
-            {saving ? "Saving..." : "Save expense"}
+            {saving ? "Saving..." : submitLabel}
           </button>
         </div>
       </form>

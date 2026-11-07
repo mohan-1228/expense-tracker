@@ -75,6 +75,17 @@ export const createGroupExpense = (groupId, expense) =>
     body: JSON.stringify(expense),
   });
 
+export const updateGroupExpense = (groupId, expenseId, expense) =>
+  apiFetch(`/groups/${groupId}/expenses/${expenseId}`, {
+    method: 'PUT',
+    body: JSON.stringify(expense),
+  });
+
+export const deleteGroupExpense = (groupId, expenseId) =>
+  apiFetch(`/groups/${groupId}/expenses/${expenseId}`, {
+    method: 'DELETE',
+  });
+
 export const getGroupBalances = (groupId) =>
   apiFetch(`/groups/${groupId}/balance`);
 
