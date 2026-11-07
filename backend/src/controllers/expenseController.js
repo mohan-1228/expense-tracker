@@ -70,7 +70,7 @@ const updateExpense = async (req, res) => {
 
     try {
         const result = await pool.query(
-            'UPDATE expenses SET category_id = $1, amount = $2, description = $3, expense_date = $4 WHERE id = $5 AND paid_by = $6 RETURNING *',
+            'UPDATE expenses SET category_id = $1, amount = $2, description = $3, expense_date = $4 WHERE id = $5 AND paid_by = $6 AND group_id IS NULL RETURNING *',
             [category_id, amount, description, expense_date, id, userId]
         );
 
@@ -91,7 +91,7 @@ const deleteExpense = async (req, res) => {
 
     try {
         const result = await pool.query(
-            'DELETE FROM expenses WHERE id = $1 AND paid_by = $2 RETURNING *',
+            'DELETE FROM expenses WHERE id = $1 AND paid_by = $2 AND group_id IS NULL RETURNING *',
             [id, userId]
         );
 
