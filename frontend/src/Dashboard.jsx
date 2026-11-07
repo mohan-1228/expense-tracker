@@ -30,7 +30,7 @@ import {
   Star,
 } from "lucide-react";
 
-import { getExpenses, getCategories } from "./api";
+import { getExpenses, getCategories, updateExpense } from "./api";
 import AddExpenseForm from "./AddExpenseForm";
 
 // Category colors
@@ -107,6 +107,7 @@ export default function Dashboard({ onLogout }) {
 
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [detailExpense, setDetailExpense] = useState(null);
+  const [editingExpense, setEditingExpense] = useState(null);
 
   // Load expenses from backend
   useEffect(() => {
@@ -832,6 +833,32 @@ export default function Dashboard({ onLogout }) {
             <ExpenseDetail
                 expense={detailExpense}
                 onClose={() => setDetailExpense(null)}
+                onEdit={(expense) => {
+                  setDetailExpense(null);
+                  setEditingExpense(expense);
+                }}
+                onDeleted={() => {
+                  setDetailExpense(null);
+                  setRefresh((value) => value + 1);
+                }}
+            />
+        )}
+
+        {editingExpense && (
+            <AddExpenseForm
+                categories={categories}
+                defaultDate={editingExpense.date}
+                title="Edit expense"
+                submitLabel="Save changes"
+                initialExpense={{
+                  amount: editingExpense.amount,
+                  expense_date: editingExpense.date,
+                  description: editingExpense.description,
+                  category_id: editingExpense.category_id,
+                }}
+                submitExpense={(expense) => updateExpense(editingExpense.id, expense)}
+                onClose={() => setEditingExpense(null)}
+                onAdded={() => setRefresh((value) => value + 1)}
             />
         )}
     </div>

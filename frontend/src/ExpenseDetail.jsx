@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getCurrentUser } from "./api";
+import { getCurrentUser, deleteExpense } from "./api";
 import { Star } from "lucide-react";
 
 const usd = new Intl.NumberFormat("en-US", {
@@ -30,7 +30,10 @@ function Row({ label, children }) {
   );
 }
 
-export default function ExpenseDetail({ expense, onClose }) {
+export default function ExpenseDetail({ expense, onClose, onEdit, onDeleted }) {
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
@@ -41,6 +44,26 @@ export default function ExpenseDetail({ expense, onClose }) {
 
   const me = getCurrentUser();
   const iPaid = expense.is_group && me && expense.paid_by === me.id;
+  // Group expenses are managed from the group page, not here.
+  const canManage = !expense.is_group;
+
+  async function handleDelete() {
+    const ok = window.confirm(
+      `Delete "${expense.description || "this expense"}"?`
+    );
+    if (!ok) return;
+
+    setError("");
+    setDeleting(true);
+    try {
+      await deleteExpense(expense.id);
+      onDeleted();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   return (
     <div
@@ -117,6 +140,32 @@ export default function ExpenseDetail({ expense, onClose }) {
                 <Star size={12} className="fill-orange-500 text-orange-500" />
                 Group expense. Your dashboard counts only your share.
             </p>
+        )}
+
+        {error && (
+          <p className="mt-3 text-sm text-red-600" role="alert">
+            {error}
+          </p>
+        )}
+
+        {canManage && (
+          <div className="mt-5 flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => onEdit(expense)}
+              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={deleting}
+              className="rounded-xl border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </button>
+          </div>
         )}
       </div>
     </div>

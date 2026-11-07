@@ -52,6 +52,12 @@ export const getCategories = () => apiFetch('/categories');
 export const createExpense = (expense) =>
   apiFetch('/expenses', { method: 'POST', body: JSON.stringify(expense) });
 
+export const updateExpense = (id, expense) =>
+  apiFetch(`/expenses/${id}`, { method: 'PUT', body: JSON.stringify(expense) });
+
+export const deleteExpense = (id) =>
+  apiFetch(`/expenses/${id}`, { method: 'DELETE' });
+
 
 export const getGroups = () => apiFetch('/groups');
 
