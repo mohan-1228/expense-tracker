@@ -168,6 +168,125 @@ const createGroupExpense = async (req, res) => {
   }
 };
 
+const updateGroupExpense = async (req, res) => {
+  const { groupId, expenseId } = req.params;
+  const { category_id, amount, description, expense_date } = req.body;
+  const userId = req.user.id;
+
+  if (!amount || !expense_date) {
+    return res.status(400).json({ message: 'Amount and expense date are required' });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const expenseResult = await client.query(
+      'SELECT * FROM expenses WHERE id = $1 AND group_id = $2 FOR UPDATE',
+      [expenseId, groupId]
+    );
+    const expense = expenseResult.rows[0];
+
+    if (!expense) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ message: 'Group expense not found' });
+    }
+    if (expense.paid_by !== userId) {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ message: 'Only the person who paid can edit this expense' });
+    }
+
+    const sharesResult = await client.query(
+      'SELECT user_id, is_settled FROM expense_shares WHERE expense_id = $1',
+      [expenseId]
+    );
+    const alreadySettled = sharesResult.rows.some((s) => s.user_id !== userId && s.is_settled);
+    if (alreadySettled) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ message: 'Cannot edit an expense that another member has already settled' });
+    }
+
+    await client.query(
+      'UPDATE expenses SET category_id = $1, amount = $2, description = $3, expense_date = $4 WHERE id = $5',
+      [category_id, amount, description, expense_date, expenseId]
+    );
+
+    // Re-split evenly among the same members the expense was originally shared with.
+    const memberIds = sharesResult.rows.map((s) => s.user_id);
+    const numberOfMembers = memberIds.length;
+    const rawShare = amount / numberOfMembers;
+    const roundedShare = Math.round(rawShare * 100) / 100;
+    const totalRounded = roundedShare * numberOfMembers;
+    const remainder = Math.round((amount - totalRounded) * 100) / 100;
+
+    await client.query('DELETE FROM expense_shares WHERE expense_id = $1', [expenseId]);
+
+    for (const memberId of memberIds) {
+      const shareAmount = memberId === userId ? roundedShare + remainder : roundedShare;
+      await client.query(
+        'INSERT INTO expense_shares (expense_id, user_id, share_amount, is_settled) VALUES ($1, $2, $3, $4)',
+        [expenseId, memberId, shareAmount, memberId === userId]
+      );
+    }
+
+    await client.query('COMMIT');
+    res.status(200).json({ message: 'Group expense updated successfully' });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error updating group expense:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+};
+
+const deleteGroupExpense = async (req, res) => {
+  const { groupId, expenseId } = req.params;
+  const userId = req.user.id;
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const expenseResult = await client.query(
+      'SELECT * FROM expenses WHERE id = $1 AND group_id = $2 FOR UPDATE',
+      [expenseId, groupId]
+    );
+    const expense = expenseResult.rows[0];
+
+    if (!expense) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ message: 'Group expense not found' });
+    }
+    if (expense.paid_by !== userId) {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ message: 'Only the person who paid can delete this expense' });
+    }
+
+    const sharesResult = await client.query(
+      'SELECT user_id, is_settled FROM expense_shares WHERE expense_id = $1',
+      [expenseId]
+    );
+    const alreadySettled = sharesResult.rows.some((s) => s.user_id !== userId && s.is_settled);
+    if (alreadySettled) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ message: 'Cannot delete an expense that another member has already settled' });
+    }
+
+    // expense_shares rows cascade-delete with the expense.
+    await client.query('DELETE FROM expenses WHERE id = $1', [expenseId]);
+
+    await client.query('COMMIT');
+    res.status(200).json({ message: 'Group expense deleted successfully' });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error deleting group expense:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+};
+
 const settleShare = async (req, res) => {
     const { shareId } = req.params;
     const userId = req.user.id;
@@ -201,6 +320,6 @@ const settleShare = async (req, res) => {
     }
 };
 
-module.exports = { createExpense, getExpenses, updateExpense, deleteExpense, createGroupExpense, settleShare  };
+module.exports = { createExpense, getExpenses, updateExpense, deleteExpense, createGroupExpense, updateGroupExpense, deleteGroupExpense, settleShare  };
   
 
