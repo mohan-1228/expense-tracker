@@ -49,6 +49,12 @@ export async function apiFetch(path, options = {}) {
 export const getExpenses = () => apiFetch('/expenses');
 export const getCategories = () => apiFetch('/categories');
 
+export const createCategory = (name) =>
+  apiFetch('/categories', { method: 'POST', body: JSON.stringify({ name }) });
+
+export const deleteCategory = (id) =>
+  apiFetch(`/categories/${id}`, { method: 'DELETE' });
+
 export const createExpense = (expense) =>
   apiFetch('/expenses', { method: 'POST', body: JSON.stringify(expense) });
 
@@ -99,6 +105,21 @@ export const settleWithMember = (groupId, withUserId) =>
   apiFetch(`/groups/${groupId}/settle`, {
     method: 'POST',
     body: JSON.stringify({ withUserId }),
+  });
+
+export const leaveGroup = (groupId) =>
+  apiFetch(`/groups/${groupId}/leave`, { method: 'POST' });
+
+export const removeGroupMember = (groupId, userId) =>
+  apiFetch(`/groups/${groupId}/members/${userId}`, { method: 'DELETE' });
+
+export const deleteGroup = (groupId) =>
+  apiFetch(`/groups/${groupId}`, { method: 'DELETE' });
+
+export const changePassword = (currentPassword, newPassword) =>
+  apiFetch('/auth/change-password', {
+    method: 'POST',
+    body: JSON.stringify({ currentPassword, newPassword }),
   });
 
 export function getCurrentUser() {

@@ -196,7 +196,7 @@ const getGroup = async (req, res) => {
     }
 
     const groupResult = await pool.query(
-      'SELECT id, name, description FROM groups WHERE id = $1',
+      'SELECT id, name, description, created_by FROM groups WHERE id = $1',
       [groupId]
     );
 
@@ -279,12 +279,123 @@ const settleWithMember = async (req, res) => {
 
 
 
+const hasOutstandingBalance = async (groupId, userId) => {
+  const result = await pool.query(
+    `SELECT 1 FROM expense_shares es
+     JOIN expenses e ON es.expense_id = e.id
+     WHERE e.group_id = $1 AND es.is_settled = false
+       AND (es.user_id = $2 OR e.paid_by = $2)
+     LIMIT 1`,
+    [groupId, userId]
+  );
+  return result.rows.length > 0;
+};
+
+const leaveGroup = async (req, res) => {
+  const { groupId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const membership = await pool.query(
+      'SELECT 1 FROM group_members WHERE group_id = $1 AND user_id = $2',
+      [groupId, userId]
+    );
+    if (membership.rows.length === 0) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    if (await hasOutstandingBalance(groupId, userId)) {
+      return res.status(409).json({ message: 'Settle up with the group before leaving' });
+    }
+
+    await pool.query(
+      'DELETE FROM group_members WHERE group_id = $1 AND user_id = $2',
+      [groupId, userId]
+    );
+
+    res.status(200).json({ message: 'Left group successfully' });
+  } catch (err) {
+    console.error('Error leaving group:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const removeGroupMember = async (req, res) => {
+  const { groupId, userId: memberIdParam } = req.params;
+  const requesterId = req.user.id;
+  const memberId = Number(memberIdParam);
+
+  try {
+    const groupResult = await pool.query('SELECT created_by FROM groups WHERE id = $1', [groupId]);
+    if (groupResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+    if (groupResult.rows[0].created_by !== requesterId) {
+      return res.status(403).json({ message: 'Only the group creator can remove members' });
+    }
+    if (memberId === requesterId) {
+      return res.status(400).json({ message: 'Use the leave group action to remove yourself' });
+    }
+
+    const membership = await pool.query(
+      'SELECT 1 FROM group_members WHERE group_id = $1 AND user_id = $2',
+      [groupId, memberId]
+    );
+    if (membership.rows.length === 0) {
+      return res.status(404).json({ message: 'That user is not a member of this group' });
+    }
+
+    if (await hasOutstandingBalance(groupId, memberId)) {
+      return res.status(409).json({ message: 'That member has an outstanding balance in this group' });
+    }
+
+    await pool.query(
+      'DELETE FROM group_members WHERE group_id = $1 AND user_id = $2',
+      [groupId, memberId]
+    );
+
+    res.status(200).json({ message: 'Member removed successfully' });
+  } catch (err) {
+    console.error('Error removing group member:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const deleteGroup = async (req, res) => {
+  const { groupId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const groupResult = await pool.query('SELECT created_by FROM groups WHERE id = $1', [groupId]);
+    if (groupResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+    if (groupResult.rows[0].created_by !== userId) {
+      return res.status(403).json({ message: 'Only the group creator can delete this group' });
+    }
+
+    const expenseCheck = await pool.query('SELECT 1 FROM expenses WHERE group_id = $1 LIMIT 1', [groupId]);
+    if (expenseCheck.rows.length > 0) {
+      return res.status(409).json({ message: 'Cannot delete a group that has expenses' });
+    }
+
+    await pool.query('DELETE FROM groups WHERE id = $1', [groupId]);
+    res.status(200).json({ message: 'Group deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting group:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 module.exports = {
     createGroup,
     getGroups,
     addGroupMember,
     getGroupBalances,
     getGroup,
-    settleWithMember
-};  
+    settleWithMember,
+    leaveGroup,
+    removeGroupMember,
+    deleteGroup,
+};
 

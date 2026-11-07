@@ -308,13 +308,27 @@ export default function Dashboard({ onLogout }) {
             </div>
           </div>
 
-          <button
-            onClick={onLogout}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
-          >
-            <LogOut size={17} />
-            Logout
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/categories"
+              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            >
+              Categories
+            </Link>
+            <Link
+              to="/account"
+              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            >
+              Account
+            </Link>
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            >
+              <LogOut size={17} />
+              Logout
+            </button>
+          </div>
 
         </div>
       </header>

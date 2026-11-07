@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import AddExpenseForm from './AddExpenseForm';
 import {
   getGroup,
@@ -12,12 +12,16 @@ import {
   getExpenses,
   updateGroupExpense,
   deleteGroupExpense,
+  leaveGroup,
+  removeGroupMember,
+  deleteGroup,
 } from './api';
 
 const money = (n) => `$${Number(n).toFixed(2)}`;
 
 export default function GroupDetail() {
   const { groupId } = useParams();
+  const navigate = useNavigate();
   const me = getCurrentUser();
 
   const [group, setGroup] = useState(null);
@@ -40,6 +44,12 @@ export default function GroupDetail() {
 
   const [categories, setCategories] = useState([]);
   const [showForm, setShowForm] = useState(false);
+
+  const [removingMemberId, setRemovingMemberId] = useState(null);
+  const [memberActionError, setMemberActionError] = useState('');
+  const [leaving, setLeaving] = useState(false);
+  const [deletingGroup, setDeletingGroup] = useState(false);
+  const [groupActionError, setGroupActionError] = useState('');
 
   useEffect(() => {
     getCategories()
@@ -137,6 +147,54 @@ export default function GroupDetail() {
     }
   }
 
+  const isCreator = me && group?.created_by === me.id;
+
+  async function handleRemoveMember(member) {
+    const ok = window.confirm(`Remove ${member.name} from this group?`);
+    if (!ok) return;
+
+    setMemberActionError('');
+    setRemovingMemberId(member.id);
+    try {
+      await removeGroupMember(groupId, member.id);
+      setRefresh((v) => v + 1);
+    } catch (err) {
+      setMemberActionError(err.message);
+    } finally {
+      setRemovingMemberId(null);
+    }
+  }
+
+  async function handleLeaveGroup() {
+    const ok = window.confirm('Leave this group?');
+    if (!ok) return;
+
+    setGroupActionError('');
+    setLeaving(true);
+    try {
+      await leaveGroup(groupId);
+      navigate('/groups');
+    } catch (err) {
+      setGroupActionError(err.message);
+      setLeaving(false);
+    }
+  }
+
+  async function handleDeleteGroup() {
+    const ok = window.confirm(`Delete "${group.name}"? This cannot be undone.`);
+    if (!ok) return;
+
+    setGroupActionError('');
+    setDeletingGroup(true);
+    try {
+      await deleteGroup(groupId);
+      navigate('/groups');
+    } catch (err) {
+      setGroupActionError(err.message);
+      setDeletingGroup(false);
+    }
+  }
+
   const categoryNameById = Object.fromEntries(categories.map((c) => [c.id, c.name]));
 
   function handleEdit(expense) {
@@ -174,17 +232,45 @@ export default function GroupDetail() {
           <>
             <div className="mt-2 flex items-center justify-between gap-3">
                 <h1 className="text-3xl font-bold text-gray-900">{group.name}</h1>
-                <button
-                    type="button"
-                    onClick={() => setShowForm(true)}
-                    className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500
-                            px-4 py-2 font-semibold text-white"
-                >
-                    + Add expense
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                      type="button"
+                      onClick={() => setShowForm(true)}
+                      className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500
+                              px-4 py-2 font-semibold text-white"
+                  >
+                      + Add expense
+                  </button>
+                  {isCreator ? (
+                    <button
+                        type="button"
+                        onClick={handleDeleteGroup}
+                        disabled={deletingGroup}
+                        className="rounded-xl border border-red-200 bg-white px-4 py-2
+                                   text-sm font-semibold text-red-600 hover:bg-red-50
+                                   disabled:opacity-50"
+                    >
+                        {deletingGroup ? 'Deleting...' : 'Delete group'}
+                    </button>
+                  ) : (
+                    <button
+                        type="button"
+                        onClick={handleLeaveGroup}
+                        disabled={leaving}
+                        className="rounded-xl border border-red-200 bg-white px-4 py-2
+                                   text-sm font-semibold text-red-600 hover:bg-red-50
+                                   disabled:opacity-50"
+                    >
+                        {leaving ? 'Leaving...' : 'Leave group'}
+                    </button>
+                  )}
+                </div>
             </div>
             {group.description && (
                 <p className="mt-1 text-gray-500">{group.description}</p>
+            )}
+            {groupActionError && (
+                <p className="mt-2 text-sm text-red-600">{groupActionError}</p>
             )}
 
             {/* Balances */}
@@ -305,16 +391,33 @@ export default function GroupDetail() {
               <h2 className="font-semibold text-gray-900">
                 Members ({group.members.length})
               </h2>
+              {memberActionError && (
+                <p className="mt-2 text-sm text-red-600">{memberActionError}</p>
+              )}
               <ul className="mt-3 divide-y divide-gray-100">
                 {group.members.map((m) => (
-                  <li key={m.id} className="py-3">
-                    <p className="font-medium text-gray-900">
-                      {m.name}
-                      {m.id === me?.id && (
-                        <span className="ml-2 text-xs text-violet-600">(you)</span>
-                      )}
-                    </p>
-                    <p className="text-sm text-gray-500">{m.email}</p>
+                  <li key={m.id} className="flex items-center justify-between gap-3 py-3">
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {m.name}
+                        {m.id === me?.id && (
+                          <span className="ml-2 text-xs text-violet-600">(you)</span>
+                        )}
+                      </p>
+                      <p className="text-sm text-gray-500">{m.email}</p>
+                    </div>
+                    {isCreator && m.id !== me?.id && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveMember(m)}
+                        disabled={removingMemberId === m.id}
+                        className="rounded-xl border border-red-200 bg-white
+                                   px-3 py-1.5 text-sm font-semibold text-red-600
+                                   transition hover:bg-red-50 disabled:opacity-50"
+                      >
+                        {removingMemberId === m.id ? 'Removing...' : 'Remove'}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
