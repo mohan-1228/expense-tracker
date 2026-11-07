@@ -104,4 +104,36 @@ const changePassword = async (req, res) => {
     }
 };
 
-module.exports = {signup, login, changePassword};
+const updateProfile = async (req, res) => {
+    const { name, email: rawEmail } = req.body;
+    const userId = req.user.id;
+
+    if(!name || !name.trim()){
+        return res.status(400).json({error: "Name is required"});
+    }
+    if(!rawEmail || !rawEmail.trim()){
+        return res.status(400).json({error: "Email is required"});
+    }
+    const email = rawEmail.trim().toLowerCase();
+
+    try{
+        const existing = await pool.query('SELECT id FROM users WHERE email = $1 AND id != $2', [email, userId]);
+
+        if(existing.rows.length > 0){
+            return res.status(409).json({error: "Email already in use"});
+        }
+
+        const result = await pool.query(
+            'UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING id, name, email',
+            [name.trim(), email, userId]
+        );
+
+        res.status(200).json({message: "Profile updated successfully", user: result.rows[0]});
+
+    }catch (err){
+        console.error(err);
+        res.status(500).json({error: "Something went wrong updating your profile"});
+    }
+};
+
+module.exports = {signup, login, changePassword, updateProfile};

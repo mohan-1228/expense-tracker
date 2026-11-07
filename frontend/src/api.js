@@ -122,6 +122,12 @@ export const changePassword = (currentPassword, newPassword) =>
     body: JSON.stringify({ currentPassword, newPassword }),
   });
 
+export const updateProfile = (name, email) =>
+  apiFetch('/auth/profile', {
+    method: 'PUT',
+    body: JSON.stringify({ name, email }),
+  });
+
 export function getCurrentUser() {
   try {
     return JSON.parse(localStorage.getItem('user'));

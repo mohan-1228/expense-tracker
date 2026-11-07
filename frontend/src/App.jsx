@@ -5,7 +5,6 @@ import Signup from "./Signup";
 import Dashboard from "./Dashboard";
 import Groups from "./Groups";
 import GroupDetail from "./GroupDetail";
-import Categories from "./Categories";
 import Account from "./Account";
 
 
@@ -105,16 +104,6 @@ export default function App() {
         element={
           isLoggedIn ? (
             <GroupDetail />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
-      <Route
-        path="/categories"
-        element={
-          isLoggedIn ? (
-            <Categories />
           ) : (
             <Navigate to="/login" replace />
           )

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import ExpenseDetail from "./ExpenseDetail";
+import ProfileMenu from "./ProfileMenu";
 
 import {
   AreaChart,
@@ -22,7 +23,6 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
-  LogOut,
   RefreshCw,
   Sparkles,
   Plus,
@@ -308,27 +308,7 @@ export default function Dashboard({ onLogout }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              to="/categories"
-              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
-            >
-              Categories
-            </Link>
-            <Link
-              to="/account"
-              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
-            >
-              Account
-            </Link>
-            <button
-              onClick={onLogout}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
-            >
-              <LogOut size={17} />
-              Logout
-            </button>
-          </div>
+          <ProfileMenu onLogout={onLogout} />
 
         </div>
       </header>
