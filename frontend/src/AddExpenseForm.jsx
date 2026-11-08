@@ -68,7 +68,7 @@ export default function AddExpenseForm({
         role="dialog"
         aria-modal="true"
         aria-label="Add expense"
-        className="w-full max-w-md space-y-4 rounded-2xl bg-white p-6 shadow-xl"
+        className="w-full max-w-md space-y-4 rounded-2xl bg-brand-50 p-6 shadow-xl"
       >
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold">{title}</h3>

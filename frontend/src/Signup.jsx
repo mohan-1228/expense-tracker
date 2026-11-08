@@ -37,7 +37,7 @@ export default function Signup({ onSignedUp, onShowLogin }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-brand-200 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+      <div className="w-full max-w-md bg-brand-50 rounded-2xl shadow-lg p-8">
         {/* Logo and App Name */}
         <div className="text-center mb-8">
           <div className="w-14 h-14 bg-brand-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
