@@ -10,6 +10,7 @@ const groupRoutes = require('./src/routes/groupRoutes');
 const categoriesRoutes = require('./src/routes/categoriesRoutes');
 const shareRoutes = require('./src/routes/shareRoutes');
 const recurringTemplatesRoutes = require('./src/routes/recurringTemplatesRoutes'); // Import the category routes
+const weeklySummaryRoutes = require('./src/routes/weeklySummaryRoutes');
 
 
 
@@ -23,6 +24,7 @@ app.use('/groups', groupRoutes); // Use the group routes
 app.use('/categories', categoriesRoutes); // Use the category routes
 app.use('/recurring-templates', recurringTemplatesRoutes); // Use the recurring templates routes
 app.use('/shares', shareRoutes); // Use the share routes
+app.use('/weekly-summary', weeklySummaryRoutes);
 
 // Runs once daily at 6:00 AM server time
 cron.schedule('0 6 * * *', async () => {
