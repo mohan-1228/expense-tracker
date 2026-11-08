@@ -128,6 +128,20 @@ export const updateProfile = (name, email) =>
     body: JSON.stringify({ name, email }),
   });
 
+export const getRecurringTemplates = () => apiFetch('/recurring-templates');
+
+export const createRecurringTemplate = (template) =>
+  apiFetch('/recurring-templates', { method: 'POST', body: JSON.stringify(template) });
+
+export const updateRecurringTemplate = (id, template) =>
+  apiFetch(`/recurring-templates/${id}`, { method: 'PUT', body: JSON.stringify(template) });
+
+export const deactivateRecurringTemplate = (id) =>
+  apiFetch(`/recurring-templates/${id}/deactivate`, { method: 'POST' });
+
+export const reactivateRecurringTemplate = (id) =>
+  apiFetch(`/recurring-templates/${id}/reactivate`, { method: 'POST' });
+
 export function getCurrentUser() {
   try {
     return JSON.parse(localStorage.getItem('user'));

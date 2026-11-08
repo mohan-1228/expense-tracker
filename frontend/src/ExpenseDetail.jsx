@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getCurrentUser, deleteExpense } from "./api";
+import { getCurrentUser, deleteExpense, deleteGroupExpense } from "./api";
 import { Star } from "lucide-react";
 
 const usd = new Intl.NumberFormat("en-US", {
@@ -44,8 +44,8 @@ export default function ExpenseDetail({ expense, onClose, onEdit, onDeleted }) {
 
   const me = getCurrentUser();
   const iPaid = expense.is_group && me && expense.paid_by === me.id;
-  // Group expenses are managed from the group page, not here.
-  const canManage = !expense.is_group;
+  // Personal expenses are always yours to manage; group expenses only if you paid for them.
+  const canManage = !expense.is_group || iPaid;
 
   async function handleDelete() {
     const ok = window.confirm(
@@ -56,7 +56,11 @@ export default function ExpenseDetail({ expense, onClose, onEdit, onDeleted }) {
     setError("");
     setDeleting(true);
     try {
-      await deleteExpense(expense.id);
+      if (expense.is_group) {
+        await deleteGroupExpense(expense.group_id, expense.id);
+      } else {
+        await deleteExpense(expense.id);
+      }
       onDeleted();
     } catch (err) {
       setError(err.message);

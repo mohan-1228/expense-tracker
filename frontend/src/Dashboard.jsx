@@ -28,9 +28,10 @@ import {
   Plus,
   Users,
   Star,
+  Repeat,
 } from "lucide-react";
 
-import { getExpenses, getCategories, updateExpense } from "./api";
+import { getExpenses, getCategories, updateExpense, updateGroupExpense } from "./api";
 import AddExpenseForm from "./AddExpenseForm";
 
 // Category colors
@@ -360,6 +361,14 @@ export default function Dashboard({ onLogout }) {
                 >
                 <Users className="h-4 w-4" />
                 Groups
+            </Link>
+
+            <Link
+                to="/recurring"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-4 py-3 text-sm font-semibold  text-brand-50 shadow-sm hover:bg-slate-50 disabled:opacity-50"
+                >
+                <Repeat className="h-4 w-4" />
+                Recurring
             </Link>
 
             </div>
@@ -842,15 +851,26 @@ export default function Dashboard({ onLogout }) {
             <AddExpenseForm
                 categories={categories}
                 defaultDate={editingExpense.date}
-                title="Edit expense"
+                title={editingExpense.is_group ? "Edit group expense" : "Edit expense"}
                 submitLabel="Save changes"
+                note={
+                  editingExpense.is_group
+                    ? "Re-splits the total evenly among the group's members."
+                    : undefined
+                }
                 initialExpense={{
-                  amount: editingExpense.amount,
+                  amount: editingExpense.is_group
+                    ? editingExpense.total_amount
+                    : editingExpense.amount,
                   expense_date: editingExpense.date,
                   description: editingExpense.description,
                   category_id: editingExpense.category_id,
                 }}
-                submitExpense={(expense) => updateExpense(editingExpense.id, expense)}
+                submitExpense={(expense) =>
+                  editingExpense.is_group
+                    ? updateGroupExpense(editingExpense.group_id, editingExpense.id, expense)
+                    : updateExpense(editingExpense.id, expense)
+                }
                 onClose={() => setEditingExpense(null)}
                 onAdded={() => setRefresh((value) => value + 1)}
             />

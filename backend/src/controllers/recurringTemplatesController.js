@@ -86,4 +86,27 @@ const deactivateTemplate = async (req, res) => {
   }
 };
 
-module.exports = { createTemplate, getTemplates, updateTemplate, deactivateTemplate };
+const reactivateTemplate = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      `UPDATE recurring_templates
+       SET is_active = true
+       WHERE id = $1 AND user_id = $2
+       RETURNING *`,
+      [id, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Template not found' });
+    }
+
+    res.json({ message: 'Template reactivated', template: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { createTemplate, getTemplates, updateTemplate, deactivateTemplate, reactivateTemplate };
