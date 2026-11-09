@@ -142,6 +142,17 @@ export const deactivateRecurringTemplate = (id) =>
 export const reactivateRecurringTemplate = (id) =>
   apiFetch(`/recurring-templates/${id}/reactivate`, { method: 'POST' });
 
+export const getWeeklySummary = () => apiFetch('/weekly-summary');
+
+export const generateWeeklySummary = () =>
+  apiFetch('/weekly-summary/generate', { method: 'POST' });
+
+export const askPenny = (message, history) =>
+  apiFetch('/chat/penny', {
+    method: 'POST',
+    body: JSON.stringify({ message, history }),
+  });
+
 export function getCurrentUser() {
   try {
     return JSON.parse(localStorage.getItem('user'));

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import ExpenseDetail from "./ExpenseDetail";
 import ProfileMenu from "./ProfileMenu";
+import WeeklySummaryCard from "./WeeklySummaryCard";
 
 import {
   AreaChart,
@@ -447,6 +448,8 @@ export default function Dashboard({ onLogout }) {
           </div>
 
         </section>
+
+        <WeeklySummaryCard />
 
         {/* CHARTS */}
         <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">

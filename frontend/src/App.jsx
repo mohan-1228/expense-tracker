@@ -7,6 +7,7 @@ import Groups from "./Groups";
 import GroupDetail from "./GroupDetail";
 import Account from "./Account";
 import RecurringTemplates from "./RecurringTemplates";
+import PennyChat from "./PennyChat";
 
 
 export default function App() {
@@ -55,6 +56,7 @@ export default function App() {
   }, [navigate]);
 
   return (
+    <>
     <Routes>
       <Route
         path="/"
@@ -133,5 +135,7 @@ export default function App() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    {isLoggedIn && <PennyChat />}
+    </>
   );
 }

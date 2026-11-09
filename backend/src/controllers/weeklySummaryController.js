@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const { generateSummaryText, buildFallbackSummary } = require('../services/bedrockSummary');
 
 const round2 = (n) => Math.round(n * 100) / 100;
 
@@ -24,7 +25,7 @@ function toDateStr(d) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-// The DB does the arithmetic; the model (added later) only turns this JSON into sentences.
+// The DB does the arithmetic; the model only turns this JSON into sentences.
 async function computeWeeklyFacts(userId, weekStartParam) {
   const weekStart = mondayOf(weekStartParam ? `${weekStartParam}T00:00:00` : new Date());
   const weekEnd = addDays(weekStart, 6);
@@ -197,4 +198,66 @@ const getWeeklyFacts = async (req, res) => {
   }
 };
 
-module.exports = { computeWeeklyFacts, getWeeklyFacts };
+// Reads whatever is already cached for the week - never calls Bedrock.
+const getWeeklySummary = async (req, res) => {
+  try {
+    const weekStart = toDateStr(
+      mondayOf(req.query.week_start ? `${req.query.week_start}T00:00:00` : new Date())
+    );
+    const result = await pool.query(
+      'SELECT * FROM weekly_summaries WHERE user_id = $1 AND week_start = $2',
+      [req.user.id, weekStart]
+    );
+    res.json(result.rows[0] || null);
+  } catch (err) {
+    console.error('Error fetching weekly summary:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Generates and caches a summary for the week. If one is already cached, returns
+// it as-is instead of calling Bedrock again - this is what keeps cost predictable.
+const generateWeeklySummary = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const weekStartParam = req.body?.week_start;
+    const weekStart = toDateStr(
+      mondayOf(weekStartParam ? `${weekStartParam}T00:00:00` : new Date())
+    );
+
+    const existing = await pool.query(
+      'SELECT * FROM weekly_summaries WHERE user_id = $1 AND week_start = $2',
+      [userId, weekStart]
+    );
+    if (existing.rows.length > 0) {
+      return res.json(existing.rows[0]);
+    }
+
+    const facts = await computeWeeklyFacts(userId, weekStartParam);
+
+    let summaryText;
+    let generatedByAi = true;
+    try {
+      summaryText = await generateSummaryText(facts);
+    } catch (err) {
+      console.error('Bedrock call failed, falling back to a plain-stats summary:', err);
+      summaryText = buildFallbackSummary(facts);
+      generatedByAi = false;
+    }
+
+    const insertResult = await pool.query(
+      `INSERT INTO weekly_summaries (user_id, week_start, summary_text, facts_json, generated_by_ai)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [userId, weekStart, summaryText, JSON.stringify(facts), generatedByAi]
+    );
+
+    res.status(201).json(insertResult.rows[0]);
+  } catch (err) {
+    console.error('Error generating weekly summary:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+module.exports = { computeWeeklyFacts, getWeeklyFacts, getWeeklySummary, generateWeeklySummary };
