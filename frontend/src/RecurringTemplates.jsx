@@ -69,7 +69,7 @@ function TemplateForm({ categories, initialTemplate, onClose, onSaved, submitTem
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        className="w-full max-w-md space-y-4 rounded-2xl bg-brand-50 p-6 shadow-xl"
+        className="w-full max-w-md space-y-4 rounded-2xl bg-white p-6 shadow-xl"
       >
         <h3 className="text-lg font-bold text-brand-900">
           {initialTemplate ? 'Edit recurring expense' : 'New recurring expense'}
@@ -276,7 +276,7 @@ export default function RecurringTemplates() {
               <button
                 type="button"
                 onClick={() => setEditingTemplate(template)}
-                className="rounded-xl border border-brand-200 bg-brand-50
+                className="rounded-xl border border-brand-200 bg-white
                            px-3 py-1.5 text-sm font-semibold text-brand-800
                            transition hover:bg-brand-200/20"
               >
@@ -286,7 +286,7 @@ export default function RecurringTemplates() {
                 type="button"
                 onClick={() => handleDeactivate(template)}
                 disabled={deactivatingId === template.id}
-                className="rounded-xl border border-red-200 bg-brand-50
+                className="rounded-xl border border-red-200 bg-white
                            px-3 py-1.5 text-sm font-semibold text-red-600
                            transition hover:bg-red-50 disabled:opacity-50"
               >
@@ -299,7 +299,7 @@ export default function RecurringTemplates() {
               type="button"
               onClick={() => handleReactivate(template)}
               disabled={reactivatingId === template.id}
-              className="rounded-xl border border-brand-200 bg-brand-50
+              className="rounded-xl border border-brand-200 bg-white
                          px-3 py-1.5 text-sm font-semibold text-brand-800
                          transition hover:bg-brand-200/20 disabled:opacity-50"
             >
@@ -338,7 +338,7 @@ export default function RecurringTemplates() {
 
         {!loading && !error && (
           <>
-            <section className="mt-6 rounded-2xl bg-brand-50 p-5 shadow">
+            <section className="mt-6 rounded-2xl bg-white p-5 shadow">
               <h2 className="font-semibold text-brand-900">
                 Active ({activeTemplates.length})
               </h2>
@@ -355,7 +355,7 @@ export default function RecurringTemplates() {
             </section>
 
             {inactiveTemplates.length > 0 && (
-              <section className="mt-6 rounded-2xl bg-brand-50 p-5 shadow">
+              <section className="mt-6 rounded-2xl bg-white p-5 shadow">
                 <h2 className="font-semibold text-brand-900">
                   Inactive ({inactiveTemplates.length})
                 </h2>

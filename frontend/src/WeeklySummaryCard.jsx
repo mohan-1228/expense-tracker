@@ -50,7 +50,7 @@ export default function WeeklySummaryCard() {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-100 bg-brand-50 p-6 shadow-sm">
+    <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
       <div className="flex items-center gap-2 text-brand-700">
         <Sparkles size={18} />
         <h3 className="text-lg font-bold text-brand-900">This week in review</h3>

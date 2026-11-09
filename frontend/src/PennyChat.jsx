@@ -44,7 +44,7 @@ export default function PennyChat() {
   return (
     <div className="fixed bottom-5 right-5 z-50">
       {open && (
-        <div className="mb-3 flex h-[32rem] w-80 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-brand-50 shadow-xl sm:w-96">
+        <div className="mb-3 flex h-[32rem] w-80 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl sm:w-96">
           <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-brand-700 to-brand-900 px-4 py-3">
             <div className="flex items-center gap-2 text-brand-50">
               <MessageCircle size={18} />
