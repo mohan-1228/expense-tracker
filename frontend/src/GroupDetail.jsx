@@ -246,7 +246,7 @@ export default function GroupDetail() {
                         type="button"
                         onClick={handleDeleteGroup}
                         disabled={deletingGroup}
-                        className="rounded-xl border border-red-200 bg-brand-50 px-4 py-2
+                        className="rounded-xl border border-red-200 bg-white px-4 py-2
                                    text-sm font-semibold text-red-600 hover:bg-red-50
                                    disabled:opacity-50"
                     >
@@ -257,7 +257,7 @@ export default function GroupDetail() {
                         type="button"
                         onClick={handleLeaveGroup}
                         disabled={leaving}
-                        className="rounded-xl border border-red-200 bg-brand-50 px-4 py-2
+                        className="rounded-xl border border-red-200 bg-white px-4 py-2
                                    text-sm font-semibold text-red-600 hover:bg-red-50
                                    disabled:opacity-50"
                     >
@@ -274,7 +274,7 @@ export default function GroupDetail() {
             )}
 
             {/* Balances */}
-            <section className="mt-6 rounded-2xl bg-brand-50 p-5 shadow">
+            <section className="mt-6 rounded-2xl bg-white p-5 shadow">
               <h2 className="font-semibold text-brand-900">Balances</h2>
               {actionError && (
                 <p className="mt-2 text-sm text-red-600">{actionError}</p>
@@ -303,7 +303,7 @@ export default function GroupDetail() {
                               type="button"
                               onClick={() => handleSettle(b)}
                               disabled={settlingId === otherId}
-                              className="rounded-xl border border-brand-200 bg-brand-50
+                              className="rounded-xl border border-brand-200 bg-white
                                          px-3 py-1.5 text-sm font-semibold text-brand-800
                                          transition hover:bg-brand-50
                                          disabled:opacity-50"
@@ -320,7 +320,7 @@ export default function GroupDetail() {
             </section>
 
             {/* Expenses */}
-            <section className="mt-6 rounded-2xl bg-brand-50 p-5 shadow">
+            <section className="mt-6 rounded-2xl bg-white p-5 shadow">
               <h2 className="font-semibold text-brand-900">
                 Expenses ({expenses.length})
               </h2>
@@ -360,7 +360,7 @@ export default function GroupDetail() {
                                 <button
                                   type="button"
                                   onClick={() => handleEdit(expense)}
-                                  className="rounded-xl border border-brand-200 bg-brand-50
+                                  className="rounded-xl border border-brand-200 bg-white
                                              px-3 py-1.5 text-sm font-semibold text-brand-800
                                              transition hover:bg-brand-50"
                                 >
@@ -370,7 +370,7 @@ export default function GroupDetail() {
                                   type="button"
                                   onClick={() => handleDelete(expense)}
                                   disabled={deletingId === expense.id}
-                                  className="rounded-xl border border-red-200 bg-brand-50
+                                  className="rounded-xl border border-red-200 bg-white
                                              px-3 py-1.5 text-sm font-semibold text-red-600
                                              transition hover:bg-red-50 disabled:opacity-50"
                                 >
@@ -387,7 +387,7 @@ export default function GroupDetail() {
             </section>
 
             {/* Members */}
-            <section className="mt-6 rounded-2xl bg-brand-50 p-5 shadow">
+            <section className="mt-6 rounded-2xl bg-white p-5 shadow">
               <h2 className="font-semibold text-brand-900">
                 Members ({group.members.length})
               </h2>
@@ -411,7 +411,7 @@ export default function GroupDetail() {
                         type="button"
                         onClick={() => handleRemoveMember(m)}
                         disabled={removingMemberId === m.id}
-                        className="rounded-xl border border-red-200 bg-brand-50
+                        className="rounded-xl border border-red-200 bg-white
                                    px-3 py-1.5 text-sm font-semibold text-red-600
                                    transition hover:bg-red-50 disabled:opacity-50"
                       >

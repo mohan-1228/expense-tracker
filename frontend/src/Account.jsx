@@ -273,7 +273,7 @@ function CategoriesTab() {
                       type="button"
                       onClick={() => handleDelete(c)}
                       disabled={deletingId === c.id}
-                      className="rounded-xl border border-red-200 bg-brand-50
+                      className="rounded-xl border border-red-200 bg-white
                                  px-3 py-1.5 text-sm font-semibold text-red-600
                                  transition hover:bg-red-50 disabled:opacity-50"
                     >
@@ -334,7 +334,7 @@ export default function Account() {
           ))}
         </div>
 
-        <div className="mt-6 rounded-2xl bg-brand-50 p-5 shadow">
+        <div className="mt-6 rounded-2xl bg-white p-5 shadow">
           {activeTab === 'profile' && <ProfileTab />}
           {activeTab === 'password' && <PasswordTab />}
           {activeTab === 'categories' && <CategoriesTab />}

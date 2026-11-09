@@ -341,7 +341,7 @@ export default function Dashboard({ onLogout }) {
             <button
                 onClick={() => setRefresh((value) => value + 1)}
                 disabled={loading}
-                className="flex items-center gap-2 rounded-xl bg-brand-50 px-4 py-3 text-sm font-semibold shadow-sm hover:bg-slate-50 disabled:opacity-50"
+                className="flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold shadow-sm hover:bg-slate-50 disabled:opacity-50"
             >
                 <RefreshCw size={17} />
                 Refresh
@@ -455,7 +455,7 @@ export default function Dashboard({ onLogout }) {
         <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
           {/* DAILY SPENDING CHART */}
-          <div className="rounded-2xl border border-slate-100 bg-brand-50 p-6 shadow-sm xl:col-span-2">
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm xl:col-span-2">
 
             <div className="mb-6">
               <h3 className="text-lg font-bold">
@@ -537,7 +537,7 @@ export default function Dashboard({ onLogout }) {
           </div>
 
           {/* CATEGORY PIE CHART */}
-          <div className="rounded-2xl border border-slate-100 bg-brand-50 p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
 
             <h3 className="text-lg font-bold">
               Spending by Category
@@ -633,7 +633,7 @@ export default function Dashboard({ onLogout }) {
         {/* EXPENSE CALENDAR */}
         <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
-          <div className="rounded-2xl border border-slate-100 bg-brand-50 p-6 shadow-sm xl:col-span-2">
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm xl:col-span-2">
 
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
 
@@ -747,7 +747,7 @@ export default function Dashboard({ onLogout }) {
           </div>
 
           {/* SELECTED DATE TRANSACTIONS */}
-          <div className="rounded-2xl border border-slate-100 bg-brand-50 p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
 
             <h3 className="text-lg font-bold">
               Daily Transactions
@@ -757,7 +757,7 @@ export default function Dashboard({ onLogout }) {
               {selectedDateLabel}
             </p>
 
-            <div className="my-5 rounded-xl bg-brand-200/25 p-4">
+            <div className="my-5 rounded-xl bg-brand-50 p-4">
               <p className="text-xs font-medium text-brand-700">
                 Total spent
               </p>

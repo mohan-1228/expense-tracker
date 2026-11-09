@@ -62,7 +62,7 @@ export default function Groups() {
         {/* Create group */}
         <form
           onSubmit={handleCreate}
-          className="mt-6 rounded-2xl bg-brand-50 p-5 shadow space-y-3"
+          className="mt-6 rounded-2xl bg-white p-5 shadow space-y-3"
         >
           <h2 className="font-semibold text-brand-900">Create a group</h2>
           <input
@@ -104,7 +104,7 @@ export default function Groups() {
             <Link
               key={g.id}
               to={`/groups/${g.id}`}
-              className="block rounded-2xl bg-brand-50 p-5 shadow hover:shadow-md transition"
+              className="block rounded-2xl bg-white p-5 shadow hover:shadow-md transition"
             >
               <p className="font-semibold text-brand-900">{g.name}</p>
               {g.description && (
