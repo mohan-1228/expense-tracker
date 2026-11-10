@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: expense_tracker_dev
+    # Mapped to 5433 on your Mac, not 5432 - you already have a real
+    # Postgres running natively on 5432 for local dev, and this avoids
+    # colliding with it. This is a separate, empty database.
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    environment:
+      PORT: 5001
+      # "db" below is not a typo for localhost - compose gives each
+      # service a DNS name equal to its service name, resolvable only
+      # by other containers on this same compose network.
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/expense_tracker_dev
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    ports:
+      - "5001:5001"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

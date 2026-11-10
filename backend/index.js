@@ -15,9 +15,15 @@ const chatRoutes = require('./src/routes/chatRoutes');
 
 
 
+// Comma-separated list, e.g. "https://app.example.com,https://www.app.example.com".
+// Falls back to the local Vite dev server so nothing breaks without a .env change.
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim());
+
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({ origin: allowedOrigins }));
 
 app.use('/auth',authRoutes);
 app.use('/expenses', expenseRoutes);
