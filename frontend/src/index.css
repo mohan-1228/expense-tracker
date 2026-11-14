@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Safety net: a stray overflowing element anywhere should never cause
+   the whole page to scroll sideways on mobile. */
+html, body {
+  overflow-x: hidden;
+}
+
 @theme {
   --color-brand-50: #DAF1DE;
   --color-brand-200: #8EB69B;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ExpenseDetail from "./ExpenseDetail";
 import ProfileMenu from "./ProfileMenu";
@@ -30,6 +30,7 @@ import {
   Users,
   Star,
   Repeat,
+  MoreVertical,
 } from "lucide-react";
 
 import { getExpenses, getCategories, updateExpense, updateGroupExpense } from "./api";
@@ -110,6 +111,19 @@ export default function Dashboard({ onLogout }) {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [detailExpense, setDetailExpense] = useState(null);
   const [editingExpense, setEditingExpense] = useState(null);
+
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const mobileMenuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)) {
+        setShowMobileMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Load expenses from backend
   useEffect(() => {
@@ -339,15 +353,6 @@ export default function Dashboard({ onLogout }) {
 
           <div className="flex items-center gap-3">
             <button
-                onClick={() => setRefresh((value) => value + 1)}
-                disabled={loading}
-                className="flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold shadow-sm hover:bg-slate-50 disabled:opacity-50"
-            >
-                <RefreshCw size={17} />
-                Refresh
-            </button>
-
-            <button
                 onClick={() => setShowForm(true)}
                 className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-brand-700 to-brand-900 px-4 py-3 text-sm font-semibold text-brand-50 shadow-sm hover:opacity-90"
             >
@@ -355,10 +360,19 @@ export default function Dashboard({ onLogout }) {
                 Add expense
             </button>
 
+            {/* Desktop: full button row */}
+            <button
+                onClick={() => setRefresh((value) => value + 1)}
+                disabled={loading}
+                className="hidden items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold shadow-sm hover:bg-slate-50 disabled:opacity-50 sm:flex"
+            >
+                <RefreshCw size={17} />
+                Refresh
+            </button>
 
             <Link
                 to="/groups"
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-4 py-3 text-sm font-semibold  text-brand-50 shadow-sm hover:bg-slate-50 disabled:opacity-50"
+                className="hidden items-center gap-2 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-4 py-3 text-sm font-semibold text-brand-50 shadow-sm hover:bg-slate-50 sm:flex"
                 >
                 <Users className="h-4 w-4" />
                 Groups
@@ -366,16 +380,59 @@ export default function Dashboard({ onLogout }) {
 
             <Link
                 to="/recurring"
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-4 py-3 text-sm font-semibold  text-brand-50 shadow-sm hover:bg-slate-50 disabled:opacity-50"
+                className="hidden items-center gap-2 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-4 py-3 text-sm font-semibold text-brand-50 shadow-sm hover:bg-slate-50 sm:flex"
                 >
                 <Repeat className="h-4 w-4" />
                 Recurring
             </Link>
 
+            {/* Mobile: Refresh/Groups/Recurring tucked behind a menu */}
+            <div className="relative sm:hidden" ref={mobileMenuRef}>
+              <button
+                type="button"
+                onClick={() => setShowMobileMenu((v) => !v)}
+                aria-label="More actions"
+                aria-expanded={showMobileMenu}
+                className="flex items-center justify-center rounded-xl bg-white p-3 shadow-sm hover:bg-slate-50"
+              >
+                <MoreVertical size={18} />
+              </button>
+
+              {showMobileMenu && (
+                <div className="absolute right-0 z-20 mt-2 w-48 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRefresh((value) => value + 1);
+                      setShowMobileMenu(false);
+                    }}
+                    disabled={loading}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
+                  >
+                    <RefreshCw size={16} />
+                    Refresh
+                  </button>
+                  <Link
+                    to="/groups"
+                    onClick={() => setShowMobileMenu(false)}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-50"
+                  >
+                    <Users size={16} />
+                    Groups
+                  </Link>
+                  <Link
+                    to="/recurring"
+                    onClick={() => setShowMobileMenu(false)}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-50"
+                  >
+                    <Repeat size={16} />
+                    Recurring
+                  </Link>
+                </div>
+              )}
             </div>
 
-
-            
+            </div>
 
         </section>
 
