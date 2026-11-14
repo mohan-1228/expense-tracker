@@ -44,8 +44,8 @@ export default function PennyChat() {
   return (
     <>
       {open && (
-        <div className="fixed inset-x-4 bottom-20 z-50 flex h-[70vh] max-h-[32rem] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl sm:inset-x-auto sm:right-5 sm:w-96">
-          <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-brand-700 to-brand-900 px-4 py-3">
+        <div className="fixed inset-0 z-50 flex flex-col bg-white sm:inset-auto sm:bottom-20 sm:right-5 sm:h-[32rem] sm:w-96 sm:rounded-2xl sm:border sm:border-slate-200 sm:shadow-xl">
+          <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-brand-700 to-brand-900 px-4 py-4 sm:py-3">
             <div className="flex items-center gap-2 text-brand-50">
               <MessageCircle size={18} />
               <span className="font-bold">Penny</span>
@@ -60,7 +60,7 @@ export default function PennyChat() {
             </button>
           </div>
 
-          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
+          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4 sm:py-3">
             {messages.length === 0 && (
               <div className="rounded-xl bg-brand-200/25 px-3 py-2 text-sm text-brand-900">
                 Hi, I'm Penny! Ask me about your spending, balances, or recurring expenses.
@@ -95,7 +95,11 @@ export default function PennyChat() {
             <div ref={bottomRef} />
           </div>
 
-          <form onSubmit={handleSend} className="flex items-center gap-2 border-t border-slate-200 p-3">
+          <form
+            onSubmit={handleSend}
+            className="flex items-center gap-2 border-t border-slate-200 p-3
+                       pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-3"
+          >
             <input
               ref={inputRef}
               value={input}
@@ -121,9 +125,9 @@ export default function PennyChat() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Close Penny chat" : "Open Penny chat"}
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full
+        className={`${open ? "hidden sm:flex" : "flex"} fixed bottom-5 right-5 z-50 h-14 w-14 items-center justify-center rounded-full
                    bg-gradient-to-br from-brand-700 to-brand-900 text-brand-50
-                   shadow-lg hover:opacity-90"
+                   shadow-lg hover:opacity-90`}
       >
         {open ? <X size={22} /> : <MessageCircle size={22} />}
       </button>
