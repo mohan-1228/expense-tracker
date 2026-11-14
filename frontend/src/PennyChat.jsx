@@ -42,9 +42,9 @@ export default function PennyChat() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50">
+    <>
       {open && (
-        <div className="mb-3 flex h-[min(32rem,70vh)] w-[calc(100vw-2.5rem)] max-w-96 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+        <div className="fixed inset-x-4 bottom-20 z-50 flex h-[70vh] max-h-[32rem] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl sm:inset-x-auto sm:right-5 sm:w-96">
           <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-brand-700 to-brand-900 px-4 py-3">
             <div className="flex items-center gap-2 text-brand-50">
               <MessageCircle size={18} />
@@ -121,12 +121,12 @@ export default function PennyChat() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Close Penny chat" : "Open Penny chat"}
-        className="flex h-14 w-14 items-center justify-center rounded-full
+        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full
                    bg-gradient-to-br from-brand-700 to-brand-900 text-brand-50
                    shadow-lg hover:opacity-90"
       >
         {open ? <X size={22} /> : <MessageCircle size={22} />}
       </button>
-    </div>
+    </>
   );
 }
