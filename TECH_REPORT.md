@@ -123,9 +123,11 @@ This is the part worth knowing cold. Each service below includes the actual conf
 
 ### IAM
 
-- **Role:** controls who/what can call AWS APIs. Right now that's the CLI user `mohan-cli`, used for all provisioning in this project.
-- **Current state, stated honestly:** `mohan-cli` has `AdministratorAccess`. That's acceptable for solo learning/dev, and explicitly **not** least-privilege. The intended next step (not yet done) is a scoped role limited to exactly `bedrock:InvokeModel` on one specific model ARN for whatever actually calls Bedrock in production.
-- **Real-world relevance:** least privilege is probably the single most-tested AWS security concept in interviews. A real, specific example of where it *hasn't* been applied yet — and a clear explanation of why that's wrong and what the fix looks like — is more credible than claiming everything is already perfect.
+- **Role:** controls who/what can call AWS APIs. Two separate identities matter here: the CLI user used for all provisioning (`mohan-cli`), and the role the running application itself assumes on EC2.
+- **CLI user:** `mohan-cli` has `AdministratorAccess` — acceptable for solo provisioning/dev work, explicitly **not** least-privilege, and not something the running app ever uses.
+- **EC2 runtime role:** a dedicated role (`expense-tracker-ec2-role`), attached via an instance profile, scoped to exactly two things: `bedrock:InvokeModel` on the one Claude Haiku inference profile/model actually used, and `ses:SendEmail` on the one verified `thapa.dev` identity — nothing else. This is the role the backend container actually assumes at runtime.
+- **A bug this caught:** the EC2 instance originally had *no* IAM role attached at all — meaning Bedrock calls (the weekly summary, Penny) would have failed in production with a credentials error the first time anyone actually exercised them there, despite working fine locally (where credentials come from the AWS CLI config instead). Attaching the scoped role fixed both that and enabled the password-reset emails, in one pass.
+- **Real-world relevance:** least privilege is probably the single most-tested AWS security concept in interviews. Having a real before/after — "the role didn't exist, so it fell back to no credentials at all, so I scoped one to exactly two actions on two specific resources" — is more concrete than citing the principle in the abstract.
 
 ### Amazon Bedrock
 
@@ -183,7 +185,7 @@ A good engineer can name these without being asked twice:
 - **No CI/CD.** Deploys are a manual `git pull` + `docker compose up -d --build` over SSH. No pipeline, no automated rollback.
 - **No monitoring/alerting.** No CloudWatch alarms, no centralized logs, no uptime checks. If the container crashes at 3am, nothing notices automatically.
 - **Single point of failure.** One EC2 instance, no load balancer, no auto-scaling, single-AZ RDS. Fine for personal use; not how you'd run this for real traffic.
-- **IAM is not least-privilege yet.** `AdministratorAccess` on the working CLI user, not a scoped role.
+- **The CLI/dev user still has `AdministratorAccess`.** The *application's* runtime role is scoped (see §4, IAM), but the identity used for provisioning everything in this project is not.
 - **No WAF.** CloudFront has no AWS WAF rules in front of it — no rate limiting or bot/exploit filtering beyond what CloudFront does by default.
 - **node-cron runs in-process.** Fine at one instance; would double-fire recurring expenses if scaled to two app servers without change.
 

@@ -25,6 +25,8 @@ Browser --> CloudFront (HTTPS) --+--> S3 (private, OAC-only): React build
 | EC2 public DNS (used as CloudFront origin) | `ec2-100-27-66-233.compute-1.amazonaws.com` |
 | RDS instance | `expense-tracker-db` (private, only reachable from the EC2 security group) |
 | SSH key | `~/Projects/aws.et/expense-tracker-key.pem` (user: `ubuntu`) |
+| EC2 IAM role | `expense-tracker-ec2-role` via instance profile `expense-tracker-ec2-profile` - scoped to `bedrock:InvokeModel` on the one Claude Haiku inference profile/model, and `ses:SendEmail` on the `thapa.dev` identity only |
+| SES sending identity | `thapa.dev` (domain-verified via DKIM). Account is in **SES sandbox** - can only email verified recipient addresses until production access is requested |
 | EC2 security group | `sg-06e71caeb1c03f16a` - allows SSH/5001 from your current IP, plus 5001 from AWS's CloudFront prefix list (`pl-3b927c52`) |
 
 **Your IP changes over time** (home/ISP dynamic IP) - if SSH or direct `:5001`
