@@ -14,8 +14,11 @@ Browser --> CloudFront (HTTPS) --+--> S3 (private, OAC-only): React build
 
 | Resource | ID / address |
 |---|---|
-| CloudFront domain | `dv8o5kikxmtnv.cloudfront.net` |
+| **Live site** | **https://pennyroom.thapa.dev** |
+| CloudFront default domain | `dv8o5kikxmtnv.cloudfront.net` (still works, same distribution) |
 | CloudFront distribution ID | `E2AM0EO4HIFIDP` |
+| ACM certificate (for pennyroom.thapa.dev) | `arn:aws:acm:us-east-1:324404179200:certificate/8ab470a4-6f22-4adb-8086-4496c3139afe` |
+| Route 53 hosted zone (thapa.dev) | `Z0955605363F18HVC2C9S` |
 | S3 bucket (frontend build) | `expense-tracker-frontend-324404179200` |
 | EC2 instance | `i-00ec7418fc2a124c2` |
 | EC2 Elastic IP | `100.27.66.233` (fixed - survives stop/start) |
@@ -60,7 +63,10 @@ without it you'll keep seeing the old build for a while.
 
 ## Known gaps / next steps
 
-- No custom domain yet - using CloudFront's own `.cloudfront.net` address.
+- The portfolio site (thapa.dev root, www.thapa.dev) runs on a CloudFront
+  distribution in a **different AWS account** than this project - only the
+  Route 53 DNS zone is shared/visible from this account. That's why this
+  app got its own subdomain rather than a `/projects` path on the main site.
 - EC2-to-CloudFront hop is plain HTTP (`http-only` origin protocol) - fine
   since the browser only ever sees HTTPS, but not end-to-end encrypted.
 - `backend/.env` on the EC2 box holds the real RDS credentials and JWT
