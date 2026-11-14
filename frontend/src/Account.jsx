@@ -268,7 +268,7 @@ function CategoriesTab() {
               <ul className="mt-3 divide-y divide-gray-100">
                 {customCategories.map((c) => (
                   <li key={c.id} className="flex items-center justify-between gap-3 py-3">
-                    <span className="font-medium text-brand-900">{c.name}</span>
+                    <span className="min-w-0 truncate font-medium text-brand-900">{c.name}</span>
                     <button
                       type="button"
                       onClick={() => handleDelete(c)}

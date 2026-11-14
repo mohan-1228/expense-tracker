@@ -230,9 +230,9 @@ export default function GroupDetail() {
 
         {group && (
           <>
-            <div className="mt-2 flex items-center justify-between gap-3">
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
                 <h1 className="text-3xl font-bold text-brand-900">{group.name}</h1>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                       type="button"
                       onClick={() => setShowForm(true)}
@@ -397,14 +397,14 @@ export default function GroupDetail() {
               <ul className="mt-3 divide-y divide-gray-100">
                 {group.members.map((m) => (
                   <li key={m.id} className="flex items-center justify-between gap-3 py-3">
-                    <div>
-                      <p className="font-medium text-brand-900">
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-brand-900">
                         {m.name}
                         {m.id === me?.id && (
                           <span className="ml-2 text-xs text-brand-700">(you)</span>
                         )}
                       </p>
-                      <p className="text-sm text-brand-700">{m.email}</p>
+                      <p className="truncate text-sm text-brand-700">{m.email}</p>
                     </div>
                     {isCreator && m.id !== me?.id && (
                       <button

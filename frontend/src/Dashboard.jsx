@@ -315,7 +315,7 @@ export default function Dashboard({ onLogout }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl space-y-7 px-5 py-8">
+      <main className="mx-auto max-w-7xl space-y-7 px-3 py-8 sm:px-5">
 
         {/* WELCOME SECTION */}
         <section className="flex flex-wrap items-center justify-between gap-4">
@@ -455,7 +455,7 @@ export default function Dashboard({ onLogout }) {
         <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
           {/* DAILY SPENDING CHART */}
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm xl:col-span-2">
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6 xl:col-span-2">
 
             <div className="mb-6">
               <h3 className="text-lg font-bold">
@@ -537,7 +537,7 @@ export default function Dashboard({ onLogout }) {
           </div>
 
           {/* CATEGORY PIE CHART */}
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6">
 
             <h3 className="text-lg font-bold">
               Spending by Category
@@ -633,7 +633,7 @@ export default function Dashboard({ onLogout }) {
         {/* EXPENSE CALENDAR */}
         <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm xl:col-span-2">
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6 xl:col-span-2">
 
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
 
@@ -718,7 +718,7 @@ export default function Dashboard({ onLogout }) {
                     </span>
 
                     {day.total > 0 && (
-                      <span className="mt-1 break-all text-[10px] font-semibold sm:text-xs">
+                      <span className="mt-1 hidden break-all text-[10px] font-semibold sm:block sm:text-xs">
                         {money(day.total)}
                       </span>
                     )}
@@ -747,7 +747,7 @@ export default function Dashboard({ onLogout }) {
           </div>
 
           {/* SELECTED DATE TRANSACTIONS */}
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6">
 
             <h3 className="text-lg font-bold">
               Daily Transactions

@@ -318,7 +318,7 @@ export default function RecurringTemplates() {
           ← Back to dashboard
         </Link>
 
-        <div className="mt-2 flex items-center justify-between gap-3">
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-3xl font-bold text-brand-900">Recurring expenses</h1>
           <button
             type="button"
