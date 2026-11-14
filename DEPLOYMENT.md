@@ -28,6 +28,7 @@ Browser --> CloudFront (HTTPS) --+--> S3 (private, OAC-only): React build
 | EC2 IAM role | `expense-tracker-ec2-role` via instance profile `expense-tracker-ec2-profile` - scoped to `bedrock:InvokeModel` on the one Claude Haiku inference profile/model, and `ses:SendEmail` on the `thapa.dev` identity only |
 | SES sending identity | `thapa.dev` (domain-verified via DKIM). Account is in **SES sandbox** - can only email verified recipient addresses until production access is requested |
 | EC2 security group | `sg-06e71caeb1c03f16a` - allows SSH/5001 from your current IP, plus 5001 from AWS's CloudFront prefix list (`pl-3b927c52`) |
+| CloudFront Function | `pennyroom-spa-routing` - viewer-request on the default (S3) behavior only; rewrites extensionless paths to `/index.html` for client-side routing |
 
 **Your IP changes over time** (home/ISP dynamic IP) - if SSH or direct `:5001`
 access stops working, update the security group:
@@ -71,6 +72,12 @@ without it you'll keep seeing the old build for a while.
   app got its own subdomain rather than a `/projects` path on the main site.
 - EC2-to-CloudFront hop is plain HTTP (`http-only` origin protocol) - fine
   since the browser only ever sees HTTPS, but not end-to-end encrypted.
+- SPA client-side routing (so refreshing on `/dashboard` works) is handled
+  by the `pennyroom-spa-routing` CloudFront Function on the default
+  behavior, **not** distribution-wide custom error responses - those used
+  to rewrite 403/404 from *any* origin (including `/api/*`) into
+  `200 + index.html`, which silently swallowed real API error responses
+  (discovered via the login-gating 403 added for email verification).
 - `backend/.env` on the EC2 box holds the real RDS credentials and JWT
   secret - never committed, only exists on that instance's disk.
 - RDS and EC2 both bill while running. Stop EC2 with
