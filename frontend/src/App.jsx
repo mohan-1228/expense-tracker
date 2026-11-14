@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Login from "./Login";
 import Signup from "./Signup";
+import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
 import Dashboard from "./Dashboard";
 import Groups from "./Groups";
 import GroupDetail from "./GroupDetail";
@@ -82,6 +84,8 @@ export default function App() {
           )
         }
       />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route
         path="/dashboard"
         element={

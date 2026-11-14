@@ -23,6 +23,28 @@ export async function register(name, email, password) {
   return data;
 }
 
+export async function forgotPassword(email) {
+  const res = await fetch(`${API_URL}/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || data.message || 'Request failed');
+  return data;
+}
+
+export async function resetPassword(token, newPassword) {
+  const res = await fetch(`${API_URL}/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, newPassword }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || data.message || 'Request failed');
+  return data;
+}
+
 export async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('token');
   const res = await fetch(`${API_URL}${path}`, {

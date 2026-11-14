@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const pool = require('../config/db');
 const jwt = require('jsonwebtoken');
+const { sendPasswordResetEmail } = require('../services/mailer');
 
 const signup = async (req, res) => {
     const { email: rawEmail, password, name } = req.body;
@@ -136,4 +138,90 @@ const updateProfile = async (req, res) => {
     }
 };
 
-module.exports = {signup, login, changePassword, updateProfile};
+const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+const forgotPassword = async (req, res) => {
+    const { email: rawEmail } = req.body;
+
+    if(!rawEmail || !rawEmail.trim()){
+        return res.status(400).json({error: "Email is required"});
+    }
+    const email = rawEmail.trim().toLowerCase();
+
+    // Always respond the same way regardless of whether the account exists,
+    // so this endpoint can't be used to check which emails are registered.
+    const genericResponse = { message: "If that email is registered, we've sent a reset link" };
+
+    try{
+        const userResult = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+
+        if(userResult.rows.length > 0){
+            const userId = userResult.rows[0].id;
+            const rawToken = crypto.randomBytes(32).toString('hex');
+            const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+            const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+
+            await pool.query(
+                'INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, $3)',
+                [userId, tokenHash, expiresAt]
+            );
+
+            const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${rawToken}`;
+
+            try{
+                await sendPasswordResetEmail(email, resetUrl);
+            }catch (mailErr){
+                console.error('Failed to send password reset email:', mailErr);
+            }
+        }
+
+        res.status(200).json(genericResponse);
+
+    }catch (err){
+        console.error(err);
+        res.status(500).json({error: "Something went wrong"});
+    }
+};
+
+const resetPassword = async (req, res) => {
+    const { token, newPassword } = req.body;
+
+    if(!token || !newPassword){
+        return res.status(400).json({error: "Token and new password are required"});
+    }
+    if(newPassword.length < 8){
+        return res.status(400).json({error: "New password must be at least 8 characters"});
+    }
+
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+    try{
+        const tokenResult = await pool.query(
+            'SELECT id, user_id, expires_at, used_at FROM password_reset_tokens WHERE token_hash = $1',
+            [tokenHash]
+        );
+
+        if(tokenResult.rows.length === 0){
+            return res.status(400).json({error: "Invalid or expired reset link"});
+        }
+
+        const resetToken = tokenResult.rows[0];
+
+        if(resetToken.used_at || new Date(resetToken.expires_at) < new Date()){
+            return res.status(400).json({error: "Invalid or expired reset link"});
+        }
+
+        const newHash = await bcrypt.hash(newPassword, 10);
+
+        await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newHash, resetToken.user_id]);
+        await pool.query('UPDATE password_reset_tokens SET used_at = NOW() WHERE id = $1', [resetToken.id]);
+
+        res.status(200).json({message: "Password reset successfully"});
+
+    }catch (err){
+        console.error(err);
+        res.status(500).json({error: "Something went wrong"});
+    }
+};
+
+module.exports = {signup, login, changePassword, updateProfile, forgotPassword, resetPassword};

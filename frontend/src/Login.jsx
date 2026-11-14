@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { login } from './api';
 
 export default function Login({ onLogin, onShowSignup, notice }) {
@@ -102,12 +103,20 @@ export default function Login({ onLogin, onShowSignup, notice }) {
 
           {/* Password Input */}
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-brand-800 mb-2"
-            >
-              Password
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-brand-800"
+              >
+                Password
+              </label>
+              <Link
+                to="/forgot-password"
+                className="text-sm font-medium text-brand-700 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
 
             <div className="relative">
 
