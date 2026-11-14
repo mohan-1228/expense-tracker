@@ -25,14 +25,19 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: allowedOrigins }));
 
-app.use('/auth',authRoutes);
-app.use('/expenses', expenseRoutes);
-app.use('/groups', groupRoutes); // Use the group routes
-app.use('/categories', categoriesRoutes); // Use the category routes
-app.use('/recurring-templates', recurringTemplatesRoutes); // Use the recurring templates routes
-app.use('/shares', shareRoutes); // Use the share routes
-app.use('/weekly-summary', weeklySummaryRoutes);
-app.use('/chat', chatRoutes);
+// Mounted under /api so CloudFront can route everything under one
+// path pattern to this backend, with everything else going to the
+// S3-hosted frontend build.
+const apiRouter = express.Router();
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/expenses', expenseRoutes);
+apiRouter.use('/groups', groupRoutes);
+apiRouter.use('/categories', categoriesRoutes);
+apiRouter.use('/recurring-templates', recurringTemplatesRoutes);
+apiRouter.use('/shares', shareRoutes);
+apiRouter.use('/weekly-summary', weeklySummaryRoutes);
+apiRouter.use('/chat', chatRoutes);
+app.use('/api', apiRouter);
 
 // Runs once daily at 6:00 AM server time
 cron.schedule('0 6 * * *', async () => {
