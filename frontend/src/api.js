@@ -7,7 +7,11 @@ export async function login(email, password) {
     body: JSON.stringify({ email, password }),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Login failed');
+  if (!res.ok) {
+    const err = new Error(data.error || data.message || 'Login failed');
+    err.code = data.code;
+    throw err;
+  }
   return data;
 }
 
@@ -39,6 +43,28 @@ export async function resetPassword(token, newPassword) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, newPassword }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || data.message || 'Request failed');
+  return data;
+}
+
+export async function verifyEmail(token) {
+  const res = await fetch(`${API_URL}/auth/verify-email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || data.message || 'Verification failed');
+  return data;
+}
+
+export async function resendVerification(email) {
+  const res = await fetch(`${API_URL}/auth/resend-verification`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || data.message || 'Request failed');

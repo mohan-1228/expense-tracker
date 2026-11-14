@@ -4,6 +4,7 @@ import Login from "./Login";
 import Signup from "./Signup";
 import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
+import VerifyEmail from "./VerifyEmail";
 import Dashboard from "./Dashboard";
 import Groups from "./Groups";
 import GroupDetail from "./GroupDetail";
@@ -33,7 +34,7 @@ export default function App() {
   }
 
   function handleSignedUp() {
-    setNotice("Account created, please log in");
+    setNotice("Account created. Check your email to verify your account before logging in.");
     navigate("/login");
   }
 
@@ -86,6 +87,7 @@ export default function App() {
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route
         path="/dashboard"
         element={

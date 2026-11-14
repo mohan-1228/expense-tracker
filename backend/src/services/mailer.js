@@ -22,4 +22,23 @@ async function sendPasswordResetEmail(toEmail, resetUrl) {
   await client.send(command);
 }
 
-module.exports = { sendPasswordResetEmail };
+async function sendVerificationEmail(toEmail, verifyUrl) {
+  const command = new SendEmailCommand({
+    FromEmailAddress: FROM_ADDRESS,
+    Destination: { ToAddresses: [toEmail] },
+    Content: {
+      Simple: {
+        Subject: { Data: 'Verify your Pennyroom email' },
+        Body: {
+          Text: {
+            Data: `Welcome to Pennyroom! Confirm this is your email address to activate your account.\n\nVerify it here (expires in 24 hours):\n${verifyUrl}\n\nIf you didn't create a Pennyroom account, you can ignore this email.`,
+          },
+        },
+      },
+    },
+  });
+
+  await client.send(command);
+}
+
+module.exports = { sendPasswordResetEmail, sendVerificationEmail };

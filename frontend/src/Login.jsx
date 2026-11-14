@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { login } from './api';
+import { login, resendVerification } from './api';
 
 export default function Login({ onLogin, onShowSignup, notice }) {
   const [email, setEmail] = useState('');
@@ -8,11 +8,15 @@ export default function Login({ onLogin, onShowSignup, notice }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [resendState, setResendState] = useState('idle'); // idle | sending | sent
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     setError('');
+    setNeedsVerification(false);
+    setResendState('idle');
     setLoading(true);
 
     try {
@@ -27,8 +31,18 @@ export default function Login({ onLogin, onShowSignup, notice }) {
 
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');
+      setNeedsVerification(err.code === 'EMAIL_NOT_VERIFIED');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleResend() {
+    setResendState('sending');
+    try {
+      await resendVerification(email.trim().toLowerCase());
+    } finally {
+      setResendState('sent');
     }
   }
 
@@ -150,9 +164,25 @@ export default function Login({ onLogin, onShowSignup, notice }) {
             <div
               role="alert"
               className="bg-red-50 border border-red-200 text-red-600
-                         text-sm px-4 py-3 rounded-xl"
+                         text-sm px-4 py-3 rounded-xl space-y-2"
             >
-              {error}
+              <p>{error}</p>
+              {needsVerification && (
+                resendState === 'sent' ? (
+                  <p className="text-brand-700">
+                    If that email needs verifying, a new link is on its way.
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={resendState === 'sending'}
+                    className="font-semibold text-brand-700 hover:underline disabled:opacity-50"
+                  >
+                    {resendState === 'sending' ? 'Sending...' : 'Resend verification email'}
+                  </button>
+                )
+              )}
             </div>
           )}
 
